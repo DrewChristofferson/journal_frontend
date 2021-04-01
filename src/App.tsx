@@ -3,7 +3,10 @@ import styled from 'styled-components'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import './App.css';
 import Sidebar from './navbar'
+import JournalsAll from './views/journalsAll/index'
 import Journal from './views/journal/index'
+import NewEntry from './views/newentry/index'
+import JournalEntry from './views/entry/index'
 
 const AppContainer = styled.div`
   margin-left: 400px;
@@ -17,13 +20,17 @@ function App() {
       <Sidebar />
       <AppContainer>
           <Switch>
-            <Route path="/journals">
+            <Route path="/journals/:jid/:entryid">
+              <JournalEntry />        
+            </Route>
+            <Route path="/journals/:jid">
               <Journal />        
             </Route>
+            <Route path="/journals">
+              <JournalsAll />        
+            </Route>
             <Route path="/newentry">
-              <div>
-                New Entries  
-              </div>           
+              <NewEntry />          
             </Route>
             <Route path="/settings">
               <div>
