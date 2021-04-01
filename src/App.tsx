@@ -1,12 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
 import styled from 'styled-components'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import './App.css';
 import Sidebar from './navbar'
+import Journal from './views/journal/index'
 
 const AppContainer = styled.div`
-  padding-left: 300px;
+  margin-left: 400px;
+  margin-top: 50px;
+  margin-right: 100px;
 `
 
 function App() {
@@ -16,9 +18,7 @@ function App() {
       <AppContainer>
           <Switch>
             <Route path="/journals">
-              <div>
-                Journals
-              </div>           
+              <Journal />        
             </Route>
             <Route path="/newentry">
               <div>
