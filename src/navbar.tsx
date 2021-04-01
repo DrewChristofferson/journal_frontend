@@ -1,6 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from "react-router-dom"
+import { IoIosJournal } from 'react-icons/io';
+import { FaPenAlt } from 'react-icons/fa';
+import { AiFillSetting } from 'react-icons/ai';
 
 
 
@@ -30,19 +33,30 @@ const SidebarLinks = styled.div`
 const NavLink = styled(Link)`
     font-size: 18px;
     font-weight: 600;
-    padding-bottom: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     color: white;
     text-decoration: none;
     padding-left: 20px;
+    display: flex;
+    align-items: flex-end;
     &:hover{
         background-color: blue;
     }
 `
 
-const links: string[][] = [
-    ["My Journals", "/journals"],
-    ["Create New Entry", "/newentry"],
-    ["Settings", "/settings"]
+const NavText = styled.div`
+    padding-left: 20px;
+`
+
+// const NavIcon = styled.div`
+//     sel: 20px;
+// `
+
+const links: any[][] = [
+    ["My Journals", "/journals", IoIosJournal],
+    ["Create New Entry", "/newentry", FaPenAlt],
+    ["Settings", "/settings", AiFillSetting]
 ]
 
 
@@ -56,8 +70,12 @@ function Sidebar () {
                 {
                     links.map(link => {
                        return (
-                           <NavLink to={link[1]}>
-                                {link[0]}
+                           <NavLink key={link[0]} to={link[1]}>
+                                < IoIosJournal size={22} />                                
+                                <NavText>
+                                    {link[0]}
+                                </NavText>
+                                
                            </NavLink>
                        )
                        
