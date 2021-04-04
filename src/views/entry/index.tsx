@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components'
 import { useParams } from "react-router-dom";
+import Editor from "@monaco-editor/react";
+
 
 
 const JournalContainer = styled.div`
@@ -115,11 +117,25 @@ const journalEntryItems: JournalEntryObject[] = [
 
 ]
 
-const dummyContent: string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vel molestie diam. Vestibulum justo elit, pharetra vel vehicula ac, suscipit sit amet ligula. Curabitur facilisis metus vitae ex scelerisque scelerisque. Morbi bibendum molestie ante, ut tempor velit tincidunt eget. Donec commodo risus sed purus sagittis, at elementum felis facilisis. Pellentesque purus ex, eleifend non cursus ut, rutrum sed urna. Donec commodo non metus eget pulvinar. Mauris auctor ipsum mattis, posuere nisi a, ornare purus. Pellentesque placerat pulvinar est, ac sollicitudin risus placerat ac. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut vel tortor sed eros pharetra ullamcorper. Ut ultricies augue a interdum tempor. Donec laoreet gravida diam, ut faucibus odio semper ac. In ante lectus, vulputate sed tellus a, finibus imperdiet nulla. Sed vulputate nunc mi, ac tincidunt urna blandit nec."
+const dummyContent: string = "import React, { useState } from \"react\"; \nimport styled from \"styled-components\"; \nimport { useParams } from \"react-router-dom\"; \nimport Editor from \"@monaco-editor/react\"; \n";
 
 function JournalEntry () {
     const { entryid } = useParams<{ entryid: string }>();
+    const [theme, setTheme] = useState("light");
+    const [language, setLanguage] = useState("javascript");
+    const [isEditorReady, setIsEditorReady] = useState(false);
 
+    function handleEditorDidMount() {
+        setIsEditorReady(true);
+    }
+
+    function toggleTheme() {
+        setTheme(theme === "light" ? "dark" : "light");
+    }
+
+    function toggleLanguage() {
+        setLanguage(language === "javascript" ? "python" : "javascript");
+    }
     return(
         <JournalContainer>
             <JournalHeader>
@@ -134,11 +150,20 @@ function JournalEntry () {
                             })
                         }
                     </JournalTitleText>
+                    
                 </JournalTitleGroup>
             </JournalHeader>
-            <EntryContent>
+            {/* <EntryContent>
                 {dummyContent}
-            </EntryContent>
+            </EntryContent> */}
+            <Editor
+                height="50vh" // By default, it fully fits with its parent
+                theme={'dark'}
+                language={language}
+                value={dummyContent}
+                // editorDidMount={handleEditorDidMount}
+                loading={"Loading..."}
+            />
         </JournalContainer>
     )
 }
