@@ -1,5 +1,7 @@
-import React, { MouseEvent } from 'react'
+import React, { MouseEvent, useState } from 'react'
 import styled from 'styled-components'
+import Editor from "@monaco-editor/react";
+import { useParams } from 'react-router-dom';
 
 const NewEntryTitleText = styled.div`
     font-size: 42px;
@@ -52,11 +54,29 @@ const Submit = styled.button`
 `;
 
 function NewEntry () {
+    const [theme, setTheme] = useState("light");
+    const [language, setLanguage] = useState("javascript");
+    const [isEditorReady, setIsEditorReady] = useState(false);
 
+    function handleEditorDidMount() {
+        setIsEditorReady(true);
+    }
+
+    function toggleTheme() {
+        setTheme(theme === "light" ? "dark" : "light");
+    }
+
+    function toggleLanguage() {
+        setLanguage(language === "javascript" ? "python" : "javascript");
+    }
+    
     const handleSubmit = (e: MouseEvent) => {
         e.preventDefault();
         alert("entry created");
     }
+
+    let newValue: string = "console.log('Hello World!'); \nconsole.log('We are killing it');"
+    
     return(
         <div>
             <NewEntryTitleText>
@@ -67,10 +87,20 @@ function NewEntry () {
                     Entry Title
                 </Label>
                 <Input type="text" id="title" placeholder="Title" />
-                <Content  placeholder="Write your content here..."/>
-                <Submit onClick={handleSubmit}>
+                <br />
+                {/* <Content  placeholder="Write your content here..."/> */}
+                {/* <Submit onClick={handleSubmit}>
                     Submit
-                </Submit>
+                </Submit> */}
+                <Editor
+                    height="50vh"
+                    width="50vw" // By default, it fully fits with its parent
+                    theme={'dark'}
+                    language={language}
+                    value={newValue}
+                    // editorDidMount={handleEditorDidMount}
+                    loading={"Loading..."}
+                />
             </NewEntryForm>
         </div>
     )
