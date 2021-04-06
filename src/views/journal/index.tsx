@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components'
-import Searchbar from '../../Components/searchbar'
+import Searchbar from '../../Components/SearchBar/SearchBar'
 import { GrAddCircle } from 'react-icons/gr';
 import { useHistory, useParams } from "react-router-dom";
 
@@ -218,7 +218,7 @@ function Journal () {
                     </JournalTitleText>
                     <AddIcon size={30} onClick={handleNewEntryClick}/>
                 </JournalTitleGroup>
-                <Searchbar />
+                <Searchbar placeholder="Search" />
             </JournalHeader>
             <Table>
                 <thead>
