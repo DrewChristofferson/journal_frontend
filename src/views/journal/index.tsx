@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components'
 import Searchbar from '../../Components/SearchBar/SearchBar'
 import { GrAddCircle } from 'react-icons/gr';

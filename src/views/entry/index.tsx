@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components'
+import ReactMarkdown from 'react-markdown'
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 
@@ -39,6 +40,20 @@ interface JournalEntryObject {
     count: number;
     owner: string;
 }
+
+const markdown = `A paragraph with *emphasis* and **strong importance**.
+
+> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
+
+* Lists
+* [ ] todo
+* [x] done
+
+A table:
+
+| a | b |
+| - | - |
+`
 
 
 const journalEntryItems: JournalEntryObject[] = [
@@ -124,6 +139,7 @@ function JournalEntry () {
     const [theme, setTheme] = useState("light");
     const [language, setLanguage] = useState("javascript");
     const [isEditorReady, setIsEditorReady] = useState(false);
+    const [ isEditView, setIsEditView ] = useState(false);
 
     function handleEditorDidMount() {
         setIsEditorReady(true);
@@ -136,10 +152,16 @@ function JournalEntry () {
     function toggleLanguage() {
         setLanguage(language === "javascript" ? "python" : "javascript");
     }
+
+    const handleEditSubmit = () => {
+        setIsEditView(!isEditView)
+    }
+
     return(
         <JournalContainer>
             <JournalHeader>
                 <JournalTitleGroup>
+                    
                     <JournalTitleText>
                         {
                             journalEntryItems.map(item => {
@@ -152,18 +174,29 @@ function JournalEntry () {
                     </JournalTitleText>
                     
                 </JournalTitleGroup>
+                
             </JournalHeader>
-            {/* <EntryContent>
-                {dummyContent}
-            </EntryContent> */}
-            <Editor
-                height="50vh" // By default, it fully fits with its parent
-                theme={'dark'}
-                language={language}
-                value={dummyContent}
-                // editorDidMount={handleEditorDidMount}
-                loading={"Loading..."}
-            />
+            {
+                isEditView ?
+                <div>
+                    <Editor
+                        height="50vh" // By default, it fully fits with its parent
+                        theme={'dark'}
+                        language={language}
+                        value={dummyContent}
+                        // editorDidMount={handleEditorDidMount}
+                        loading={"Loading..."}
+                    />
+                    <button onClick={handleEditSubmit}>Done</button>
+                </div>
+                
+                :
+                <EntryContent>
+                    <ReactMarkdown>
+                        {markdown}
+                    </ReactMarkdown>
+                </EntryContent>
+            }
         </JournalContainer>
     )
 }
