@@ -4,7 +4,7 @@ import './Button.css'
 
 const ButtonStyle = styled.button`
     border: none;
-    padding: 15px 32px;
+    padding: 5px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;

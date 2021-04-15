@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components'
-import { useParams } from "react-router-dom";
+import ReactMarkdown from 'react-markdown'
+import { HtmlRenderer, Parser } from 'commonmark'
+import { useParams, Link, useRouteMatch } from "react-router-dom";
 import Editor from "@monaco-editor/react";
+import Button from '../../Components/Button/Button'
+import AppContext from '../../context/context';
 
-
+const BreadcrumbContainer = styled.div`
+    padding-bottom: 20px;
+    font-size: 12px;
+`
 
 const JournalContainer = styled.div`
     display: flex;
     flex-direction: column;
+    margin-top: 80px;
 `
 
 const JournalHeader = styled.div`
@@ -21,15 +29,28 @@ const JournalTitleGroup = styled.div`
     display: flex;
     justify-content: left;
     align-items: flex-end;
+    width: 100%
+`
+const ButtonContainer = styled.div`
+    flex-basis: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
 `
 const JournalTitleText = styled.div`
-    font-size: 42px;
+    font-size: 28px;
+    flex-basis: 70%;
 `
 
 const EntryContent = styled.div`
-    padding-top: 50px;
     line-height: 2em;
 `
+
+interface Context {
+    journalEntryItems: JournalEntryObject;
+    journals: JournalObject;
+
+}
 
 interface JournalEntryObject {
     id: string;
@@ -39,6 +60,34 @@ interface JournalEntryObject {
     count: number;
     owner: string;
 }
+
+interface JournalObject {
+    id: string;
+    name: string;
+    date: string;
+    update: string;
+    count: number;
+    owner: string;
+}
+
+interface MatchParams {
+    jid: string,
+    eid: string
+  }
+
+const markdown: string = `A paragraph with *emphasis* and **strong importance**.
+
+> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
+
+* Lists
+* [ ] todo
+* [x] done
+
+A table:
+
+| a | b |
+| - | - |
+`
 
 
 const journalEntryItems: JournalEntryObject[] = [
@@ -122,9 +171,38 @@ const dummyContent: string = "import React, { useState } from \"react\"; \nimpor
 function JournalEntry () {
     const { entryid } = useParams<{ entryid: string }>();
     const [theme, setTheme] = useState("light");
-    const [language, setLanguage] = useState("javascript");
+    const [language, setLanguage] = useState("markdown");
     const [isEditorReady, setIsEditorReady] = useState(false);
+    const [ isEditView, setIsEditView ] = useState(false);
+    const [ journal, setJournal ] = useState<JournalObject>();
+    const [ journalEntry, setJournalEntry ] = useState<JournalEntryObject>();
+    const [displayText, setDisplayText] = useState<string>('')
+    const [markdownContent, setMarkdownContent] = useState<string | undefined>(markdown);
+    const context = useContext(AppContext)
+    // const { journalEntryItems, journals } = React.useContext(AppContext) as ContextType
+    let match = useRouteMatch<MatchParams>('/journals/:jid/:eid')
+    let parser = new Parser()
+    let renderer = new HtmlRenderer()
+    let markdownDisplay = renderer.render(parser.parse(markdown))
 
+    useEffect(() => {
+        let temp: string = markdown ? markdown : '';
+        let markdownDisplay: any = renderer.render(parser.parse(temp));
+        setDisplayText(markdownDisplay);
+        console.log(context)
+        getJournalEntry();
+    }, [])
+
+    const getJournalEntry = () => {
+        context.journalEntryItems.forEach(entry => {
+            if (entryid === entry.id){
+                setJournalEntry(entry);
+                console.log(entry);
+            }
+        })
+    }
+
+    // Monaco editor functions start//
     function handleEditorDidMount() {
         setIsEditorReady(true);
     }
@@ -133,13 +211,31 @@ function JournalEntry () {
         setTheme(theme === "light" ? "dark" : "light");
     }
 
-    function toggleLanguage() {
-        setLanguage(language === "javascript" ? "python" : "javascript");
+    function handleEditorChange(value: string | undefined, event: React.FormEvent<HTMLInputElement>) {
+        setMarkdownContent(value)
+      }
+
+    const handleEditSubmit = () => {
+        let temp: string = markdownContent ? markdownContent : '';
+        let markdownDisplay: any = renderer.render(parser.parse(temp));
+        setDisplayText(markdownDisplay);
+        setIsEditView(!isEditView)
     }
+    // Monaco editor functions end//
+
+    const handleEditToggle = () => {
+        setIsEditView(!isEditView);
+    }
+
     return(
         <JournalContainer>
+            <BreadcrumbContainer>
+                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${match?.params?.jid}`}>{journalEntry?.journalid}</Link> &gt; <Link to={`/journals/${match?.params?.jid}/${match?.params?.eid}`}>{journalEntry?.id}</Link>
+            </BreadcrumbContainer>
+
             <JournalHeader>
                 <JournalTitleGroup>
+                    
                     <JournalTitleText>
                         {
                             journalEntryItems.map(item => {
@@ -150,20 +246,33 @@ function JournalEntry () {
                             })
                         }
                     </JournalTitleText>
-                    
+                    <ButtonContainer>
+                        <Button onClick={handleEditToggle}>Edit</Button>
+                    </ButtonContainer> 
                 </JournalTitleGroup>
+                
             </JournalHeader>
-            {/* <EntryContent>
-                {dummyContent}
-            </EntryContent> */}
-            <Editor
-                height="50vh" // By default, it fully fits with its parent
-                theme={'dark'}
-                language={language}
-                value={dummyContent}
-                // editorDidMount={handleEditorDidMount}
-                loading={"Loading..."}
-            />
+            {
+                isEditView ?
+                <div>
+                    <Editor
+                        height="50vh" // By default, it fully fits with its parent
+                        theme={'dark'}
+                        language={language}
+                        value={markdownContent}
+                        // editorDidMount={handleEditorDidMount}
+                        loading={"Loading..."}
+                        onChange={handleEditorChange}
+                    />
+                    {/* <button onClick={handleEditSubmit}>Done</button> */}
+                    <Button onClick={handleEditSubmit}>Done</Button>
+                </div>
+                
+                :
+                <EntryContent>
+                    <div dangerouslySetInnerHTML={ {__html: displayText} } />
+                </EntryContent>
+            }
         </JournalContainer>
     )
 }
