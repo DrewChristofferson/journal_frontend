@@ -183,6 +183,8 @@ function Journal () {
         history.push("/newentry")
     }
 
+    
+
     useEffect(() => {
         getRecords();
     }, context.records)
