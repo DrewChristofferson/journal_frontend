@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import styled from 'styled-components'
-import Searchbar from '../../Components/SearchBar/SearchBar'
+import React, { useContext, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import Searchbar from '../../Components/SearchBar/SearchBar';
 import { GrAddCircle } from 'react-icons/gr';
 import { useHistory, useParams } from "react-router-dom";
+// import { contextType } from 'react-commonmark';
+import AppContext from '../../context/context';
+import axios from 'axios';
 
 
 const JournalContainer = styled.div`
@@ -67,132 +70,110 @@ interface JournalObject {
     owner: string;
 }
 
-
-
 const journalItems: JournalObject[] = [
-    {
-        id: "full",
-        name: "Full Stack",
-        date: "1/4/2021",
-        update: "3/16/2021",
-        count: 18,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "google",
-        name: "Google Work",
-        date: "2/19/2021",
-        update: "2/19/2021",
-        count: 1,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "personal",
-        name: "Personal Thoughts",
-        date: "1/4/2021",
-        update: "3/16/2021",
-        count: 10,
-        owner: "Drew Christofferson"
-    },
 
 ]
 
 interface JournalEntryObject {
-    id: string;
-    journalid: string;
-    name: string;
-    date: string;
-    count: number;
-    owner: string;
+    record_id: string;
+    journal_id: string;
+    record_title: string;
+    createdAt: string;
+    updatedAt: string;
+    content: string;
 }
 
 const journalColumns: string[] = [
     "Entry Name",
     "Date Created",
-    "Word Count",
-    "Created By"
+    "Last Update"
 ]
 
 const journalEntryItems: JournalEntryObject[] = [
-    {
-        id: "one",
-        journalid: "full",
-        name: "Adding Terraform to Your Infrastructure",
-        date: "1/4/2021",
-        count: 189,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "two",
-        journalid: "google",
-        name: "Leadership Skills in Tech",
-        date: "2/19/2021",
-        count: 1109,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "three",
-        journalid: "full",
-        name: "Why Docker Make Local Development So Easy",
-        date: "1/4/2021",
-        count: 710,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "four",
-        journalid: "full",
-        name: "Git Commands to Remember",
-        date: "1/4/2021",
-        count: 189,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "five",
-        journalid: "personal",
-        name: "My Company Watchlist 2021",
-        date: "2/19/2021",
-        count: 1109,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "six",
-        journalid: "full",
-        name: "On Spring Boot Security",
-        date: "1/4/2021",
-        count: 710,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "seven",
-        journalid: "google",
-        name: "Kubernetes vs. ECS",
-        date: "1/4/2021",
-        count: 189,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "eight",
-        journalid: "google",
-        name: "Tips for Managing a Team",
-        date: "2/19/2021",
-        count: 1109,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "nine",
-        journalid: "personal",
-        name: "Why Keep a Dev Journal?",
-        date: "1/4/2021",
-        count: 710,
-        owner: "Drew Christofferson"
-    },
+    // {
+    //     id: "one",
+    //     journalid: "full",
+    //     name: "Adding Terraform to Your Infrastructure",
+    //     date: "1/4/2021",
+    //     count: 189,
+    //     owner: "Drew Christofferson"
+    // },
+    // {
+    //     id: "two",
+    //     journalid: "google",
+    //     name: "Leadership Skills in Tech",
+    //     date: "2/19/2021",
+    //     count: 1109,
+    //     owner: "Drew Christofferson"
+    // },
+    // {
+    //     id: "three",
+    //     journalid: "full",
+    //     name: "Why Docker Make Local Development So Easy",
+    //     date: "1/4/2021",
+    //     count: 710,
+    //     owner: "Drew Christofferson"
+    // },
+    // {
+    //     id: "four",
+    //     journalid: "full",
+    //     name: "Git Commands to Remember",
+    //     date: "1/4/2021",
+    //     count: 189,
+    //     owner: "Drew Christofferson"
+    // },
+    // {
+    //     id: "five",
+    //     journalid: "personal",
+    //     name: "My Company Watchlist 2021",
+    //     date: "2/19/2021",
+    //     count: 1109,
+    //     owner: "Drew Christofferson"
+    // },
+    // {
+    //     id: "six",
+    //     journalid: "full",
+    //     name: "On Spring Boot Security",
+    //     date: "1/4/2021",
+    //     count: 710,
+    //     owner: "Drew Christofferson"
+    // },
+    // {
+    //     id: "seven",
+    //     journalid: "google",
+    //     name: "Kubernetes vs. ECS",
+    //     date: "1/4/2021",
+    //     count: 189,
+    //     owner: "Drew Christofferson"
+    // },
+    // {
+    //     id: "eight",
+    //     journalid: "google",
+    //     name: "Tips for Managing a Team",
+    //     date: "2/19/2021",
+    //     count: 1109,
+    //     owner: "Drew Christofferson"
+    // },
+    // {
+    //     id: "nine",
+    //     journalid: "personal",
+    //     name: "Why Keep a Dev Journal?",
+    //     date: "1/4/2021",
+    //     count: 710,
+    //     owner: "Drew Christofferson"
+    // },
 
 ]
 
 function Journal () {
     let history = useHistory();
+    const context = useContext(AppContext);
+    const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    }
     const { jid } = useParams<{ jid: string }>();
-
 
     const handleJournalEntryClick = (id: string) => {
         history.push(`/journals/${jid}/${id}`)
@@ -202,18 +183,25 @@ function Journal () {
         history.push("/newentry")
     }
 
+    useEffect(() => {
+        getRecords();
+    })
+
+    const getRecords = async() => {
+        await axios.get('http://rh-lb-954750967.us-east-1.elb.amazonaws.com/api/v1/record/journal/' + jid, config)
+        .then((response) => {
+                context.updateRecords(response.data);
+        })
+        .catch((e) => e)
+    }
+
     return(
         <JournalContainer>
             <JournalHeader>
                 <JournalTitleGroup>
                     <JournalTitleText>
                         {
-                            journalItems.map(item => {
-                                if(item.id === jid){
-                                    return item.name;
-                                }
-                                else return null;
-                            })
+                            context.journal.journal_name
                         }
                     </JournalTitleText>
                     <AddIcon size={30} onClick={handleNewEntryClick}/>
@@ -234,17 +222,14 @@ function Journal () {
                 </thead>
                 <tbody>
                     {
-                        journalEntryItems.map(item => {
-                            if(jid === item.journalid){
+                        context.records.map(item => {
                                 return (
-                                    <TableRow key={item.id} onClick={() => handleJournalEntryClick(item.id)}>
-                                        <TableItem>{item.name}</TableItem>
-                                        <TableItem>{item.date}</TableItem>
-                                        <TableItem>{item.count}</TableItem>
-                                        <TableItem>{item.owner}</TableItem>
+                                    <TableRow key={item.record_id} onClick={() => handleJournalEntryClick(item.record_id)}>
+                                        <TableItem>{item.record_title}</TableItem>
+                                        <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
+                                        <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
                                     </TableRow>
                                 )
-                            } else return null;
                             
                         })
                     }
