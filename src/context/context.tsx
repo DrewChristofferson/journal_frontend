@@ -1,57 +1,59 @@
-import React from 'react'
+import React from 'react';
+import JournalEntry from '../views/entry';
 
 interface Context {
     journalEntryItems: JournalEntryObject;
     journals: JournalObject;
 
-}
+};
 
 interface JournalEntryObject {
-    id: string;
-    journalid: string;
-    name: string;
-    date: string;
-    count: number;
-    owner: string;
-}
+    record_id: string;
+    journal_id: string;
+    record_title: string;
+    createdAt: string;
+    updatedAt: string;
+    content: string;
+};
 
 interface JournalObject {
-    id: string;
-    name: string;
-    date: string;
-    update: string;
-    count: number;
-    owner: string;
-}
+    journal_id: string;
+    journal_name: string;
+    createdAt: string;
+    updatedAt: string;
+    user_id: string;
+};
 
-const journalData: JournalObject[] = [
-    {
-        id: "full",
-        name: "Full Stack",
-        date: "1/4/2021",
-        update: "3/16/2021",
-        count: 18,
-        owner: "Drew Christofferson"
-    }
-]
+const journalData: JournalObject[] = [];
 
 
-const entryData: JournalEntryObject[] = [
-    {
-        id: "one",
-        journalid: "full",
-        name: "Adding Terraform to Your Infrastructure",
-        date: "1/4/2021",
-        count: 189,
-        owner: "Drew Christofferson"
-    }
-]
+const entryData: JournalEntryObject[] = [];
 
-const updateToken = (value: string) => {
-    console.log('invalidtoken');
-}
+const entry: JournalEntryObject = {
+    record_id: "",
+    journal_id: "",
+    record_title: "",
+    createdAt: "",
+    updatedAt: "",
+    content: ""
+};
 
-let token = 'thisismytoken';
+const journal: JournalObject = {
+    journal_id: "",
+    journal_name: "",
+    createdAt: "",
+    updatedAt: "",
+    user_id: ""
+};
+
+const updateToken = (value: string) => {};
+
+const updateJournals = (value: JournalObject[]) => {};
+const updateJournal = (value: JournalObject) => {};
+const updateRecords = (value: JournalEntryObject[]) => {};
+const updateRecord = (value: JournalEntryObject) => {};
+let token = "";
+
 let isAuthenticated = false;
 
 const AppContext = React.createContext({
@@ -59,7 +61,15 @@ const AppContext = React.createContext({
     journals: journalData,
     updateToken,
     isAuthenticated,
-    token
+    token,
+    updateJournals,
+    records: entryData,
+    updateRecords,
+    record: entry,
+    updateRecord,
+    journal: journal,
+    updateJournal
 
-})
-export default AppContext
+});
+
+export default AppContext;
