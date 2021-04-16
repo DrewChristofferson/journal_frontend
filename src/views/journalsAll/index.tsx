@@ -81,7 +81,7 @@ function JournalsAll () {
 
     useEffect(() => {
         getJournals();
-    })
+    }, context.journals)
 
     const handleJournalClick = (id: string) => {
         history.push(`/journals/${id}`)
@@ -91,6 +91,11 @@ function JournalsAll () {
 
     const handleNewJournalClick = () => {
         alert("TODO: new journal page")
+    }
+
+    const handleJournalDelete = async (id: string) => {
+        await axios.delete(`${context.API_BASE_URL}/api/v1/journal/${id}`, config)
+        getJournals();
     }
 
     const getJournals = async() => {
@@ -128,10 +133,11 @@ function JournalsAll () {
                     {
                         context.journals.map(item => {
                             return (
-                                <TableRow key={item.journal_id} onClick={() => handleJournalClick(item.journal_id)}>
-                                    <TableItem>{item.journal_name}</TableItem>
+                                <TableRow key={item.journal_id} >
+                                    <TableItem onClick={() => handleJournalClick(item.journal_id)}>{item.journal_name}</TableItem>
                                     <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
                                     <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
+                                    <TableItem onClick={() => handleJournalDelete(item.journal_id)}><button>❌</button></TableItem>
                                 </TableRow>
                             )
                         })
