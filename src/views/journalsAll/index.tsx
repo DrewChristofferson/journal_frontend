@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import styled from 'styled-components'
 import Searchbar from '../../Components/searchbar'
 import { GrAddCircle } from 'react-icons/gr';
 import { useHistory } from "react-router-dom";
+import axios from 'axios';
+import AppContext from '../../context/context';
 
 
 const JournalContainer = styled.div`
@@ -107,6 +109,17 @@ const journalItems: JournalObject[] = [
 
 function JournalsAll () {
     let history = useHistory();
+    const context = useContext(AppContext);
+    const config = {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        }
+      }
+
+    useEffect(() => {
+        console.log(context.token)
+        getJournals();
+    })
 
     const handleJournalClick = (id: string) => {
         history.push(`/journals/${id}`)
@@ -114,6 +127,14 @@ function JournalsAll () {
 
     const handleNewJournalClick = () => {
         alert("TODO: new journal page")
+    }
+
+    const getJournals = async() => {
+        await axios.get('http://rh-lb-954750967.us-east-1.elb.amazonaws.com/api/v1/journal/user', config).then(
+            function(response) {
+                console.log(response)
+            }
+        )
     }
 
     return(
