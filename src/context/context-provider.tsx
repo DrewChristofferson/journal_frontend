@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import AppContext from './context'
 import App from '../App'
+import axios from 'axios';
 
 
 interface JournalObject {
@@ -124,22 +125,64 @@ const data: JournalEntryObject[] = [
 
 ]
 
+interface JournalEntryObjectDB {
+    id: string;
+    journalid: string;
+    name: string;
+    date: string;
+    count: number;
+    owner: string;
+}
+
+interface JournalObjectDB {
+    journal_id: string;
+    user_id: string;
+    journal_name: string;
+    createdAt: string;
+    updatedAt: number;
+}
+
 /** The context provider for our app */
 export default function AppProvider () {
     const [ journalEntryItems, setJournalEntryItems ] = useState<JournalEntryObject[]>(data)
     const [ journals, setJournals ] = useState<JournalObject[]>(journalItems)
+    const [ token, setToken ] = useState<string>('invalidtoken')
+    const [ isAuthenticated, setIsAuthenticated ] = useState<boolean>(false)
+    // token: string = 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzZXRoIiwiYXV0aG9yaXRpZXMiOlt7ImF1dGhvcml0eSI6ImpvdXJuYWw6cmVhZCJ9LHsiYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9LHsiYXV0aG9yaXR5Ijoiam91cm5hbDp3cml0ZSJ9LHsiYXV0aG9yaXR5IjoicmVjb3JkOndyaXRlIn1dLCJpYXQiOjE2MTg1Mjk0MDgsImV4cCI6MTYxOTMwODgwMH0.QXZRULldW6uNxoRzz2cx_dPFZLvhp3RT62FJEpWWsDSwNXZYoj0q6c-vhhn3wcUdYidmv7BMNKlNiVcSslsJxQ'
+    let config = {
+        headers: {
+          Authorization: token,
+        }
+      }
 
+    useEffect(() => {
+        getJournals();
+    })
 
+    let getJournals = async() => {
+        await axios.get('http://rh-lb-954750967.us-east-1.elb.amazonaws.com/api/v1/journal/user', config).then(
+            function(response) {
+                console.log(response)
+            }
+        )
+        await axios.get('http://rh-lb-954750967.us-east-1.elb.amazonaws.com/api/v1/record/journal/7a4b41bb-6824-4404-9beb-ab2ba10a978b', config).then(
+            function(response) {
+                console.log(response)
+            }
+        )
+
+    }
+
+    const updateToken = (value: string) => {
+        console.log(value.slice(6));
+        setToken(value.slice(6));
+        setIsAuthenticated(true);
+        localStorage.setItem('token', value.slice(6));
+    }
 
     return (
-        <AppContext.Provider value={{journalEntryItems, journals}}>
+        <AppContext.Provider value={{journalEntryItems, journals, updateToken, isAuthenticated, token}}>
             <App />
         </AppContext.Provider>
     )
-
-
-    // async componentDidMount() {
-    //     //make api calls here
-    // }
-
 }
