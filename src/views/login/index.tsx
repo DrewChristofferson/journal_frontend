@@ -48,7 +48,7 @@ function Login() {
 
         axios({
             method: 'post',
-            url: 'http://rh-lb-954750967.us-east-1.elb.amazonaws.com/login',
+            url: `${context.API_BASE_URL}/login'`,
             data: {
               username: values.username,
               password: values.password
