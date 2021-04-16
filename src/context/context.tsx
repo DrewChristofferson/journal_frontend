@@ -47,8 +47,19 @@ const entryData: JournalEntryObject[] = [
     }
 ]
 
+const updateToken = (value: string) => {
+    console.log('invalidtoken');
+}
+
+let token = 'thisismytoken';
+let isAuthenticated = false;
+
 const AppContext = React.createContext({
     journalEntryItems: entryData,
-    journals: journalData
+    journals: journalData,
+    updateToken,
+    isAuthenticated,
+    token
+
 })
 export default AppContext

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components'
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
+import AppContext from './context/context'
 import './App.css';
 import Sidebar from './navbar'
 import JournalsAll from './views/journalsAll/index'
@@ -16,6 +17,8 @@ const AppContainer = styled.div`
 `
 
 function App() {
+  const context = useContext(AppContext);
+  
   return (
     <Router>
       <Switch>
