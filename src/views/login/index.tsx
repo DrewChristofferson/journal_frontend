@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react'
-import styled from 'styled-components'
-import { Redirect, useHistory } from 'react-router-dom'
+import React, { useState, useContext } from 'react';
+import styled from 'styled-components';
+import { Redirect, useHistory } from 'react-router-dom';
 import { Formik, Field, Form, FormikHelpers } from "formik";
 import axios from 'axios';
 import AppContext from '../../context/context';
@@ -57,7 +57,6 @@ function Login() {
             function(response) {
                 if(response.status === 200){
                     history.push("/journals");
-                    console.log(response)
                     context.updateToken(response.headers.authorization)
                 } else if (response.status === 403){
                     console.log("invalid username or password");
@@ -67,7 +66,6 @@ function Login() {
             }
         ).catch(
             function(e) {
-                console.log(e.response);
                 setShowError(true);
             }
         );

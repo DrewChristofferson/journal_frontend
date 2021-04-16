@@ -6,19 +6,16 @@ import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import AppContext from '../../context/context';
 
-
 const JournalContainer = styled.div`
     display: flex;
     flex-direction: column;
 `
-
 const JournalHeader = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     padding-bottom: 50px;
 `
-
 const JournalTitleGroup = styled.div`
     display: flex;
     justify-content: left;
@@ -27,13 +24,11 @@ const JournalTitleGroup = styled.div`
 const JournalTitleText = styled.div`
     font-size: 42px;
 `
-
 const AddIcon = styled(GrAddCircle)`
     padding-bottom: 15px;
     padding-left: 25px;
     cursor: pointer;
 `
-
 const Table = styled.table`
     color: black;
     width: 100%;
@@ -43,7 +38,6 @@ const TableRowHeading = styled.tr`
     text-align: left;
     line-height: 50px;
 `
-
 const TableRow = styled.tr`
     text-align: left;
     line-height: 50px;
@@ -62,67 +56,37 @@ const TableItem = styled.td`
 `
 
 interface JournalObject {
-    id: string;
-    name: string;
-    date: string;
-    update: string;
-    count: number;
-    owner: string;
+    journal_id: string;
+    journal_name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    user_id: string;
 }
 
 const journalColumns: string[] = [
     "Journal Name",
     "Date Created",
     "Last Update",
-    "Entry Count",
-    "Created By"
+    // "Created By"
 ]
-
-const journalItems: JournalObject[] = [
-    {
-        id: "full",
-        name: "Full Stack",
-        date: "1/4/2021",
-        update: "3/16/2021",
-        count: 18,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "google",
-        name: "Google Work",
-        date: "2/19/2021",
-        update: "2/19/2021",
-        count: 1,
-        owner: "Drew Christofferson"
-    },
-    {
-        id: "personal",
-        name: "Personal Thoughts",
-        date: "1/4/2021",
-        update: "3/16/2021",
-        count: 10,
-        owner: "Drew Christofferson"
-    },
-
-]
-
 
 function JournalsAll () {
     let history = useHistory();
     const context = useContext(AppContext);
     const config = {
         headers: {
-          Authorization: localStorage.getItem('token'),
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
-      }
+    }
 
     useEffect(() => {
-        console.log(context.token)
         getJournals();
     })
 
     const handleJournalClick = (id: string) => {
         history.push(`/journals/${id}`)
+        let journal = context.journals.filter(j => j.journal_id === id)[0];
+        context.updateJournal(journal);
     }
 
     const handleNewJournalClick = () => {
@@ -130,11 +94,11 @@ function JournalsAll () {
     }
 
     const getJournals = async() => {
-        await axios.get('http://rh-lb-954750967.us-east-1.elb.amazonaws.com/api/v1/journal/user', config).then(
-            function(response) {
-                console.log(response)
-            }
-        )
+        await axios.get('http://rh-lb-954750967.us-east-1.elb.amazonaws.com/api/v1/journal/user', config)
+        .then((response) => {
+                context.updateJournals(response.data);
+        })
+        .catch((e) => e)
     }
 
     return(
@@ -162,14 +126,12 @@ function JournalsAll () {
                 </thead>
                 <tbody>
                     {
-                        journalItems.map(item => {
+                        context.journals.map(item => {
                             return (
-                                <TableRow key={item.id} onClick={() => handleJournalClick(item.id)}>
-                                    <TableItem>{item.name}</TableItem>
-                                    <TableItem>{item.date}</TableItem>
-                                    <TableItem>{item.update}</TableItem>
-                                    <TableItem>{item.count}</TableItem>
-                                    <TableItem>{item.owner}</TableItem>
+                                <TableRow key={item.journal_id} onClick={() => handleJournalClick(item.journal_id)}>
+                                    <TableItem>{item.journal_name}</TableItem>
+                                    <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
+                                    <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
                                 </TableRow>
                             )
                         })
