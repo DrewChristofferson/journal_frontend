@@ -53,6 +53,7 @@ const updateJournal = (value: JournalObject) => {};
 const updateRecords = (value: JournalEntryObject[]) => {};
 const updateRecord = (value: JournalEntryObject) => {};
 let token = "";
+let API_BASE_URL = "http://rh-lb-954750967.us-east-1.elb.amazonaws.com";
 
 let isAuthenticated = false;
 
@@ -68,7 +69,8 @@ const AppContext = React.createContext({
     record: entry,
     updateRecord,
     journal: journal,
-    updateJournal
+    updateJournal,
+    API_BASE_URL
 
 });
 

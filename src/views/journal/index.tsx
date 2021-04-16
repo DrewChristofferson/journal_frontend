@@ -188,7 +188,7 @@ function Journal () {
     })
 
     const getRecords = async() => {
-        await axios.get('http://rh-lb-954750967.us-east-1.elb.amazonaws.com/api/v1/record/journal/' + jid, config)
+        await axios.get(`${context.API_BASE_URL}/api/v1/record/journal/` + jid, config)
         .then((response) => {
                 context.updateRecords(response.data);
         })
