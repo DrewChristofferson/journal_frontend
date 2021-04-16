@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
 import styled from 'styled-components'
 import { Redirect, useHistory } from 'react-router-dom'
 import { Formik, Field, Form, FormikHelpers } from "formik";
 import axios from 'axios';
+import AppContext from '../../context/context';
+
 
 const Container = styled.div`
     display: flex;
@@ -39,28 +41,36 @@ interface MyFormValues {
 function Login() {
     const history = useHistory();
     const initialValues: MyFormValues = { username: '', password: '' };
+    const [showError, setShowError] = useState<Boolean>(false);
+    const context = useContext(AppContext);
 
     const handleSubmit = (values: MyFormValues, actions: FormikHelpers<MyFormValues>) => {
 
-        fetch('http://localhost:8080/login', {
-            method: 'POST',
-            body: JSON.stringify({
-                username: values.username,
-                password: values.password,
-            }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-            })
-            .then((response) => response.json())
-            .then((json) => console.log(json));
-
-        if(values.username === "drew" && values.password === "christofferson"){
-            history.push("/")
-        }else{
-            alert(JSON.stringify(values, null, 2));
-        }
-        console.log({ values, actions });
+        axios({
+            method: 'post',
+            url: 'http://rh-lb-954750967.us-east-1.elb.amazonaws.com/login',
+            data: {
+              username: values.username,
+              password: values.password
+            }
+          }).then(
+            function(response) {
+                if(response.status === 200){
+                    history.push("/journals");
+                    console.log(response)
+                    context.updateToken(response.headers.authorization)
+                } else if (response.status === 403){
+                    console.log("invalid username or password");
+                } else {
+                    console.log("server error");
+                }
+            }
+        ).catch(
+            function(e) {
+                console.log(e.response);
+                setShowError(true);
+            }
+        );
         actions.setSubmitting(false);
     }
 
@@ -93,6 +103,12 @@ function Login() {
                         <button type="submit">Submit</button>
                     </Form>
                 </Formik>
+                {
+                    showError ?
+                    <p style={{color: 'red'}}>Invalid username or password</p>
+                    :
+                    <></>
+                }
                 <div>
                     Forgot Password? 
                 </div>
