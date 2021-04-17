@@ -155,7 +155,7 @@ function JournalsAll () {
                         context.journals.map(item => {
                             return (
                                 <TableRow key={item.journal_id} >
-                                    <TableItem id={"journalName"} onClick={() => handleJournalClick(item.journal_id)}>{item.journal_name}</TableItem>
+                                    <TableItem onClick={() => handleJournalClick(item.journal_id)}>{item.journal_name}</TableItem>
                                     <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
                                     <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
                                     <TableItem onClick={() => handleJournalEdit(item.journal_id, item.journal_name)}>✎</TableItem>
