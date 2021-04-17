@@ -176,7 +176,7 @@ export default function AppProvider () {
     const [ journal, setJournal ] = useState<JournalObject>(journalItem);
     const [ records, setRecords ] = useState<JournalEntryObject[]>(journalRecords);
     const [ record, setRecord ] = useState<JournalEntryObject>(journalRecord);
-    let API_BASE_URL = "http://rh-lb-954750967.us-east-1.elb.amazonaws.com";
+    let API_BASE_URL = "http://rh-lb-493719566.us-east-1.elb.amazonaws.com";
 
     const updateToken = (value: string) => {
         setToken(value.slice(6));
