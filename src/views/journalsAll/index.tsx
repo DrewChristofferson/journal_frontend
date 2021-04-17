@@ -81,7 +81,7 @@ function JournalsAll () {
 
     useEffect(() => {
         getJournals();
-    })
+    }, context.journals)
 
     const handleJournalClick = (id: string) => {
         history.push(`/journals/${id}`)
@@ -90,8 +90,33 @@ function JournalsAll () {
     }
 
     const handleNewJournalClick = () => {
-        alert("TODO: new journal page")
-    }
+        let name: string = "";
+        let names: string[] = context.journals.flatMap(j => j.journal_name);
+        while (name === "" || names.includes(name)) {
+            name = String(window.prompt("Journal name must be unique and nonempty!"));
+        }
+        let newJournal = {
+            journal_name: name
+        };
+        if (name.length > 0 && name !== 'null') {
+            postJournal(newJournal).then((res) => getJournals())
+        }
+    };
+
+    const handleJournalDelete = async (id: string) => {
+        await axios.delete(`${context.API_BASE_URL}/api/v1/journal/${id}`, config)
+        getJournals();
+    };
+
+    const handleJournalEdit = async (id: string, name: string) => {
+        // const currentInnerHtml = document.getElementById("journalName")?.innerHTML;
+        // let html = `<input type={"text"} placeholder={"${name}"}/><button>Save</button><button>Cancel</button>`;
+        // document.getElementById("journalName").innerHTML : = html;
+    };
+
+    const postJournal = async (journal: any) => {
+        await axios.post(`${context.API_BASE_URL}/api/v1/journal`, journal, config)
+    };
 
     const getJournals = async() => {
         await axios.get(`${context.API_BASE_URL}/api/v1/journal/user`, config)
@@ -99,7 +124,8 @@ function JournalsAll () {
                 context.updateJournals(response.data);
         })
         .catch((e) => e)
-    }
+    };
+
 
     return(
         <JournalContainer>
@@ -128,10 +154,12 @@ function JournalsAll () {
                     {
                         context.journals.map(item => {
                             return (
-                                <TableRow key={item.journal_id} onClick={() => handleJournalClick(item.journal_id)}>
-                                    <TableItem>{item.journal_name}</TableItem>
+                                <TableRow key={item.journal_id} >
+                                    <TableItem id={"journalName"} onClick={() => handleJournalClick(item.journal_id)}>{item.journal_name}</TableItem>
                                     <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
                                     <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
+                                    <TableItem onClick={() => handleJournalEdit(item.journal_id, item.journal_name)}>✎</TableItem>
+                                    <TableItem onClick={() => handleJournalDelete(item.journal_id)}>❌</TableItem>
                                 </TableRow>
                             )
                         })

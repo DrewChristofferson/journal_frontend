@@ -183,9 +183,11 @@ function Journal () {
         history.push("/newentry")
     }
 
+    
+
     useEffect(() => {
         getRecords();
-    })
+    }, context.records)
 
     const getRecords = async() => {
         await axios.get(`${context.API_BASE_URL}/api/v1/record/journal/` + jid, config)
