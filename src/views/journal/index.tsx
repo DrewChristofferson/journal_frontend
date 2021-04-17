@@ -180,7 +180,8 @@ function Journal () {
     }
 
     const handleNewEntryClick = () => {
-        history.push("/newentry")
+        history.push("/newentry");
+        console.log(context.journal);
     }
 
     const handleRecordDelete = async (id: string) => {
