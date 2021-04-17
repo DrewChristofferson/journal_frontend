@@ -53,7 +53,7 @@ const updateJournal = (value: JournalObject) => {};
 const updateRecords = (value: JournalEntryObject[]) => {};
 const updateRecord = (value: JournalEntryObject) => {};
 let token = "";
-let API_BASE_URL = "http://rh-lb-954750967.us-east-1.elb.amazonaws.com";
+let API_BASE_URL = "http://rh-lb-493719566.us-east-1.elb.amazonaws.com";
 
 let isAuthenticated = false;
 

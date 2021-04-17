@@ -185,7 +185,8 @@ function Journal () {
 
     const handleRecordDelete = async (id: string) => {
         await axios.delete(`${context.API_BASE_URL}/api/v1/record/${id}`, config)
-        getRecords();
+        .then((res) => getRecords());
+        console.log(context.records)
     };
 
     useEffect(() => {
@@ -233,7 +234,7 @@ function Journal () {
                                         <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{item.record_title}</TableItem>
                                         <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
                                         <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
-                                        <TableItem onClick={() => handleRecordDelete(item.journal_id)}>❌</TableItem>
+                                        <TableItem onClick={() => handleRecordDelete(item.record_id)}>❌</TableItem>
                                     </TableRow>
                                 )
                             
