@@ -58,7 +58,7 @@ const Submit = styled.button`
 function NewEntry () {
     let history = useHistory();
     const [theme, setTheme] = useState("light");
-    const [language, setLanguage] = useState("javascript");
+    const [language, setLanguage] = useState("markdown");
     const [isEditorReady, setIsEditorReady] = useState(false);
     const context = useContext(AppContext);
     const config = {
