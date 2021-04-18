@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { HtmlRenderer, Parser } from 'commonmark';
-import { useParams, Link, useRouteMatch } from "react-router-dom";
+import { useParams, Link, useRouteMatch, useHistory } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import Button from '../../Components/Button/Button';
 import AppContext from '../../context/context';
+import axios from 'axios';
 
 const BreadcrumbContainer = styled.div`
     padding-bottom: 20px;
@@ -99,15 +100,22 @@ function JournalEntry () {
     const [theme, setTheme] = useState("light");
     const [language, setLanguage] = useState("markdown");
     const [isEditorReady, setIsEditorReady] = useState(false);
-    const [ isEditView, setIsEditView ] = useState(false);
+    const [isEditView, setIsEditView] = useState(false);
     const [displayText, setDisplayText] = useState<string>('')
     const [markdownContent, setMarkdownContent] = useState<string | undefined>(markdown);
-    const context = useContext(AppContext)
+    const context = useContext(AppContext); 
+    let history = useHistory(); 
+    const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    };
     // const { journalEntryItems, journals } = React.useContext(AppContext) as ContextType
     let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     let parser = new Parser()
     let renderer = new HtmlRenderer()
     let markdownDisplay = renderer.render(parser.parse(markdown))
+    
 
     useEffect(() => {
         let temp: string = markdown ? markdown : '';
@@ -123,7 +131,7 @@ function JournalEntry () {
                 setDisplayText(context.record.content)
                 console.log(record);
             }
-        })
+        }) 
     }
 
     // Monaco editor functions start//
@@ -137,14 +145,21 @@ function JournalEntry () {
 
     function handleEditorChange(value: string | undefined, event: React.FormEvent<HTMLInputElement>) {
         setMarkdownContent(value)
+        putEntry(value).then(res => history.push(`/journals/${context.journal.journal_id}/${context.record.record_id}`));
       }
 
     const handleEditSubmit = () => {
         let temp: string = markdownContent ? markdownContent : '';
         let markdownDisplay: any = renderer.render(parser.parse(temp));
         setDisplayText(markdownDisplay);
-        setIsEditView(!isEditView)
-    }
+        setIsEditView(!isEditView);
+        // context.updateRecord()
+        // putEntry(updatedEntry).then(res => history.push(`/journals/${context.journal.journal_id}`));
+    };
+
+    const putEntry = async (entry: any) => {
+        await axios.put(`${context.API_BASE_URL}/api/v1/record`, entry, config)
+    };
     // Monaco editor functions end//
 
     const handleEditToggle = () => {

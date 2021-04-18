@@ -2,13 +2,17 @@ import React, {useContext, useEffect} from 'react';
 import styled from 'styled-components'
 import Searchbar from '../../Components/searchbar'
 import { GrAddCircle } from 'react-icons/gr';
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import axios from 'axios';
 import AppContext from '../../context/context';
 
 const JournalContainer = styled.div`
     display: flex;
     flex-direction: column;
+`
+const BreadcrumbContainer = styled.div`
+    padding-bottom: 20px;
+    font-size: 12px;
 `
 const JournalHeader = styled.div`
     display: flex;
@@ -63,6 +67,11 @@ interface JournalObject {
     user_id: string;
 }
 
+interface MatchParams {
+    jid: string,
+    eid: string
+  };
+
 const journalColumns: string[] = [
     "Journal Name",
     "Date Created",
@@ -72,6 +81,7 @@ const journalColumns: string[] = [
 
 function JournalsAll () {
     let history = useHistory();
+    let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     const context = useContext(AppContext);
     const config = {
         headers: {
@@ -129,6 +139,9 @@ function JournalsAll () {
 
     return(
         <JournalContainer>
+            <BreadcrumbContainer>
+                {/* <Link to="/journals">My Journals</Link>  */}
+            </BreadcrumbContainer>
             <JournalHeader>
                 <JournalTitleGroup>
                     <JournalTitleText>
