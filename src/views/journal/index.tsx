@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Searchbar from '../../Components/SearchBar/SearchBar';
 import { GrAddCircle } from 'react-icons/gr';
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, Link, useRouteMatch } from "react-router-dom";
 // import { contextType } from 'react-commonmark';
 import AppContext from '../../context/context';
 import axios from 'axios';
@@ -12,7 +12,10 @@ const JournalContainer = styled.div`
     display: flex;
     flex-direction: column;
 `
-
+const BreadcrumbContainer = styled.div`
+    padding-bottom: 20px;
+    font-size: 12px;
+`
 const JournalHeader = styled.div`
     display: flex;
     justify-content: space-between;
@@ -88,6 +91,11 @@ const journalColumns: string[] = [
     "Date Created",
     "Last Update"
 ]
+
+interface MatchParams {
+    jid: string,
+    eid: string
+  };
 
 const journalEntryItems: JournalEntryObject[] = [
     // {
@@ -167,6 +175,7 @@ const journalEntryItems: JournalEntryObject[] = [
 
 function Journal () {
     let history = useHistory();
+    let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     const context = useContext(AppContext);
     const config = {
         headers: {
@@ -204,6 +213,9 @@ function Journal () {
 
     return(
         <JournalContainer>
+            <BreadcrumbContainer>
+                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${match?.params?.jid}`}>{context.journal?.journal_name}</Link>
+            </BreadcrumbContainer>
             <JournalHeader>
                 <JournalTitleGroup>
                     <JournalTitleText>
