@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Searchbar from '../../Components/SearchBar/SearchBar';
 import { GrAddCircle } from 'react-icons/gr';
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, Link, useRouteMatch } from "react-router-dom";
 // import { contextType } from 'react-commonmark';
 import AppContext from '../../context/context';
 import axios from 'axios';
@@ -12,7 +12,10 @@ const JournalContainer = styled.div`
     display: flex;
     flex-direction: column;
 `
-
+const BreadcrumbContainer = styled.div`
+    padding-bottom: 20px;
+    font-size: 12px;
+`
 const JournalHeader = styled.div`
     display: flex;
     justify-content: space-between;
@@ -89,84 +92,15 @@ const journalColumns: string[] = [
     "Last Update"
 ]
 
-const journalEntryItems: JournalEntryObject[] = [
-    // {
-    //     id: "one",
-    //     journalid: "full",
-    //     name: "Adding Terraform to Your Infrastructure",
-    //     date: "1/4/2021",
-    //     count: 189,
-    //     owner: "Drew Christofferson"
-    // },
-    // {
-    //     id: "two",
-    //     journalid: "google",
-    //     name: "Leadership Skills in Tech",
-    //     date: "2/19/2021",
-    //     count: 1109,
-    //     owner: "Drew Christofferson"
-    // },
-    // {
-    //     id: "three",
-    //     journalid: "full",
-    //     name: "Why Docker Make Local Development So Easy",
-    //     date: "1/4/2021",
-    //     count: 710,
-    //     owner: "Drew Christofferson"
-    // },
-    // {
-    //     id: "four",
-    //     journalid: "full",
-    //     name: "Git Commands to Remember",
-    //     date: "1/4/2021",
-    //     count: 189,
-    //     owner: "Drew Christofferson"
-    // },
-    // {
-    //     id: "five",
-    //     journalid: "personal",
-    //     name: "My Company Watchlist 2021",
-    //     date: "2/19/2021",
-    //     count: 1109,
-    //     owner: "Drew Christofferson"
-    // },
-    // {
-    //     id: "six",
-    //     journalid: "full",
-    //     name: "On Spring Boot Security",
-    //     date: "1/4/2021",
-    //     count: 710,
-    //     owner: "Drew Christofferson"
-    // },
-    // {
-    //     id: "seven",
-    //     journalid: "google",
-    //     name: "Kubernetes vs. ECS",
-    //     date: "1/4/2021",
-    //     count: 189,
-    //     owner: "Drew Christofferson"
-    // },
-    // {
-    //     id: "eight",
-    //     journalid: "google",
-    //     name: "Tips for Managing a Team",
-    //     date: "2/19/2021",
-    //     count: 1109,
-    //     owner: "Drew Christofferson"
-    // },
-    // {
-    //     id: "nine",
-    //     journalid: "personal",
-    //     name: "Why Keep a Dev Journal?",
-    //     date: "1/4/2021",
-    //     count: 710,
-    //     owner: "Drew Christofferson"
-    // },
+interface MatchParams {
+    jid: string,
+    eid: string
+  };
 
-]
 
 function Journal () {
     let history = useHistory();
+    let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     const context = useContext(AppContext);
     const config = {
         headers: {
@@ -185,9 +119,13 @@ function Journal () {
     }
 
     const handleRecordDelete = async (id: string) => {
-        await axios.delete(`${context.API_BASE_URL}/api/v1/record/${id}`, config)
-        .then((res) => getRecords());
-        console.log(context.records)
+        if (window.confirm("Are you sure you want to delete this entry? This cannot be undone.")) { //prompt the user and confirm they want to delete the journal entry
+            //if yes, delete the entry
+            await axios.delete(`${context.API_BASE_URL}/api/v1/record/${id}`, config)
+            .then((res) => getRecords());
+        }
+
+        // console.log(context.records)
     };
 
     useEffect(() => {
@@ -204,6 +142,9 @@ function Journal () {
 
     return(
         <JournalContainer>
+            <BreadcrumbContainer>
+                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${match?.params?.jid}`}>{context.journal?.journal_name}</Link>
+            </BreadcrumbContainer>
             <JournalHeader>
                 <JournalTitleGroup>
                     <JournalTitleText>

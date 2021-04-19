@@ -83,7 +83,7 @@ function NewEntry () {
 
     const postEntry = async (entry: any) => {
         await axios.post(`${context.API_BASE_URL}/api/v1/record`, entry, config)
-    } ;
+    };
 
     let content: string;
     let initialValue: string = "";
