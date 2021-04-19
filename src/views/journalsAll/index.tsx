@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components'
 import Searchbar from '../../Components/searchbar'
 import { GrAddCircle } from 'react-icons/gr';
@@ -83,6 +83,7 @@ function JournalsAll () {
     let history = useHistory();
     let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     const context = useContext(AppContext);
+    const [journals, setJournals] = useState<[JournalObject] | undefined>();
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -91,7 +92,7 @@ function JournalsAll () {
 
     useEffect(() => {
         getJournals();
-    }, context.journals)
+    }, [context.journals])
 
     const handleJournalClick = (id: string) => {
         history.push(`/journals/${id}`)
@@ -134,7 +135,8 @@ function JournalsAll () {
     const getJournals = async() => {
         await axios.get(`${context.API_BASE_URL}/api/v1/journal/user`, config)
         .then((response) => {
-                context.updateJournals(response.data);
+            setJournals(response.data);
+            context.updateJournals(response.data);
         })
         .catch((e) => e)
     };
@@ -143,7 +145,7 @@ function JournalsAll () {
     return(
         <JournalContainer>
             <BreadcrumbContainer>
-                {/* <Link to="/journals">My Journals</Link>  */}
+                <Link to="/journals">My Journals</Link> 
             </BreadcrumbContainer>
             <JournalHeader>
                 <JournalTitleGroup>
@@ -168,7 +170,7 @@ function JournalsAll () {
                 </thead>
                 <tbody>
                     {
-                        context.journals.map(item => {
+                        journals?.map(item => {
                             return (
                                 <TableRow key={item.journal_id} >
                                     <TableItem onClick={() => handleJournalClick(item.journal_id)}>{item.journal_name}</TableItem>

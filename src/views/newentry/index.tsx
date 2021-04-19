@@ -1,4 +1,4 @@
-import React, { MouseEvent, useContext, useState } from 'react'
+import React, { MouseEvent, useContext, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Editor from "@monaco-editor/react";
 import { useHistory, useParams } from 'react-router-dom';
@@ -21,7 +21,7 @@ const Label = styled.label`
 const Input = styled.input`
     border: 2px solid #dadada;
     border-radius: 7px;
-    height: 70%;
+    height: 30px;
     width: 50%;
     text-indent: 10px;
     &:focus {
@@ -43,6 +43,21 @@ const Content = styled.textarea`
 `;
 
 const Submit = styled.button`
+    border: 2px solid #2158ff;
+    background-color: #2158ff;
+    color: white;
+    border-radius: 7px;
+    height: 30px;
+    width: 100px;
+    &:hover {
+        background-color: blue;
+        color: white;
+        border: 2px solid blue;
+        cursor: pointer;
+
+`;
+
+const Cancel = styled.button`
     border: 2px solid #dadada;
     border-radius: 7px;
     height: 30px;
@@ -60,65 +75,63 @@ function NewEntry () {
     const [theme, setTheme] = useState("light");
     const [language, setLanguage] = useState("markdown");
     const [isEditorReady, setIsEditorReady] = useState(false);
+    const [entryTitle, setEntryTitle] = useState<string | undefined>();
+    const [entryContent, setEntryContent] = useState<string | undefined>();
     const context = useContext(AppContext);
+    const { jid } = useParams<{ jid: string }>();
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
     };
 
-    const handleEditorChange = (value: any, event: MouseEvent) => {
-        content = value;
-    };
 
     const handleSubmit = (e: MouseEvent) => {
         e.preventDefault();
         let newEntry = {
-            journal_id: context.journal.journal_id,
-            record_title: title,
-            content: content
+            journal_id: jid,
+            record_title: entryTitle,
+            content: entryContent
         };
-        postEntry(newEntry).then(res => history.push(`/journals/${context.journal.journal_id}`));
+        postEntry(newEntry).then(res => {
+            history.push(`/journals/${jid}`)
+        });
     };
+
+    function handleEditorChange(value: string | undefined, event: React.FormEvent<HTMLInputElement>) {
+        setEntryContent(value)
+      }
+
 
     const postEntry = async (entry: any) => {
         await axios.post(`${context.API_BASE_URL}/api/v1/record`, entry, config)
     };
 
-    let content: string;
-    let initialValue: string = "";
-    let title = document.getElementById("title")?.nodeValue;
+
     return(
         <div>
             <NewEntryTitleText>
                 Create a New Entry
             </NewEntryTitleText>
             <NewEntryForm>
-            {/* <br />
-                <Label>
-                    Entry Title
-                </Label> */}
-                <br />
-                <Input type="textarea" id="title" placeholder="Title" onKeyUp={e => {
-                        let el: any = e.target;
-                        title = el.value;
-                    }
-                } />
-                <br /><br />
-                {/* <Content  placeholder="Write your content here..."/> */}
+
+                <Input type="textarea" id="title" placeholder="Title" value={entryTitle} onChange={(e: React.FormEvent<HTMLInputElement>) => setEntryTitle(e.currentTarget.value)}/>
+
                  
                 <Editor
                     height="50vh"
                     width="50vw" // By default, it fully fits with its parent
                     theme={'dark'}
                     language={language}
-                    value={initialValue}
-                    // editorDidMount={handleEditorDidMount}
+                    value={entryContent}
                     loading={"Loading..."}
                     onChange={handleEditorChange}
                 />
+                <Cancel onClick={() => history.push("/journals")}>
+                    Cancel
+                </Cancel>
                 <Submit onClick={handleSubmit}>
-                    Submit
+                    Save
                 </Submit>
             </NewEntryForm>
         </div>
