@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { HtmlRenderer, Parser } from 'commonmark';
-import { useParams, Link, useRouteMatch } from "react-router-dom";
+import { useParams, Link, useRouteMatch, useHistory } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import Button from '../../Components/Button/Button';
 import AppContext from '../../context/context';
+import axios from 'axios';
 
 const BreadcrumbContainer = styled.div`
     padding-bottom: 20px;
@@ -99,15 +100,23 @@ function JournalEntry () {
     const [theme, setTheme] = useState("light");
     const [language, setLanguage] = useState("markdown");
     const [isEditorReady, setIsEditorReady] = useState(false);
-    const [ isEditView, setIsEditView ] = useState(false);
+    const [isEditView, setIsEditView] = useState(false);
     const [displayText, setDisplayText] = useState<string>('')
     const [markdownContent, setMarkdownContent] = useState<string | undefined>(markdown);
-    const context = useContext(AppContext)
+    const context = useContext(AppContext); 
+    let history = useHistory(); 
+    const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        //   "Content-Type": "text/plain"
+        }
+    };
     // const { journalEntryItems, journals } = React.useContext(AppContext) as ContextType
     let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     let parser = new Parser()
     let renderer = new HtmlRenderer()
     let markdownDisplay = renderer.render(parser.parse(markdown))
+    
 
     useEffect(() => {
         let temp: string = markdown ? markdown : '';
@@ -123,7 +132,7 @@ function JournalEntry () {
                 setDisplayText(context.record.content)
                 console.log(record);
             }
-        })
+        }) 
     }
 
     // Monaco editor functions start//
@@ -135,20 +144,56 @@ function JournalEntry () {
         setTheme(theme === "light" ? "dark" : "light");
     }
 
+    let newContent:string;
+
     function handleEditorChange(value: string | undefined, event: React.FormEvent<HTMLInputElement>) {
         setMarkdownContent(value)
+        // newContent = String(value); 
       }
 
     const handleEditSubmit = () => {
+        // debugger; 
         let temp: string = markdownContent ? markdownContent : '';
         let markdownDisplay: any = renderer.render(parser.parse(temp));
         setDisplayText(markdownDisplay);
-        setIsEditView(!isEditView)
-    }
+        // debugger; 
+        setIsEditView(!isEditView);
+        let updatedEntry = { //including all the items in the JournalObject so that I could use the updateRecord context function. Didn't work though.. 
+            record_id:context.record.record_id,
+            record_title:context.record.record_title,
+            journal_id:context.record.journal_id,
+            createdAt:context.record.createdAt,
+            updatedAt:context.record.updatedAt,
+            content:temp
+        }
+        // debugger; 
+        putEntry(updatedEntry)
+            // .then(res => getJournalEntry())
+            // .then(res => getRecords());
+        context.updateRecord(updatedEntry);
+        // setMarkdownContent(updatedEntry.content); //need to update the markdown content somehow.. 
+        // getJournalEntry(); //adding this totally messes up the record updates... 
+        handleEditToggle();
+    };
+
+    const putEntry = async (entry: any) => {
+        await axios.put(`${context.API_BASE_URL}/api/v1/record/${context.record.record_id}`, 
+            entry, 
+            config)
+    };
     // Monaco editor functions end//
 
     const handleEditToggle = () => {
         setIsEditView(!isEditView);
+    }
+
+    const getRecords = async() => {
+        await axios.get(`${context.API_BASE_URL}/api/v1/record/${context.record.record_id}`, config)
+        .then((response) => {
+                context.updateRecords(response.data);
+        })
+        .catch((e) => e)
+        // debugger; 
     }
 
     return(
@@ -173,12 +218,12 @@ function JournalEntry () {
             </JournalHeader>
             {
                 isEditView ?
-                <div>
+                <div> 
                     <Editor
                         height="50vh" // By default, it fully fits with its parent
                         theme={'dark'}
                         language={language}
-                        value={context.record.content}
+                        value= {displayText}
                         // editorDidMount={handleEditorDidMount}
                         loading={"Loading..."}
                         onChange={handleEditorChange}
@@ -187,9 +232,10 @@ function JournalEntry () {
                     <Button onClick={handleEditSubmit}>Done</Button>
                 </div>
                 
-                :
+                : /*** if false (not the editor view) ***/ 
+                // <ReactMarkdown source={markdownContent}/>
                 <EntryContent>
-                    <div dangerouslySetInnerHTML={ {__html: context.record.content} } />
+                    <div dangerouslySetInnerHTML={ {__html: displayText} } />  {/* normally this used displayText, but displayText doesn't update immediately?  */}
                 </EntryContent>
             }
         </JournalContainer>
