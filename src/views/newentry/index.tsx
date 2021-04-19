@@ -1,7 +1,9 @@
-import React, { MouseEvent, useState } from 'react'
+import React, { MouseEvent, useContext, useState } from 'react'
 import styled from 'styled-components'
 import Editor from "@monaco-editor/react";
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import AppContext from '../../context/context';
+import axios from 'axios';
 
 const NewEntryTitleText = styled.div`
     font-size: 42px;
@@ -54,53 +56,70 @@ const Submit = styled.button`
 `;
 
 function NewEntry () {
+    let history = useHistory();
     const [theme, setTheme] = useState("light");
-    const [language, setLanguage] = useState("javascript");
+    const [language, setLanguage] = useState("markdown");
     const [isEditorReady, setIsEditorReady] = useState(false);
+    const context = useContext(AppContext);
+    const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+    };
 
-    function handleEditorDidMount() {
-        setIsEditorReady(true);
-    }
+    const handleEditorChange = (value: any, event: MouseEvent) => {
+        content = value;
+    };
 
-    function toggleTheme() {
-        setTheme(theme === "light" ? "dark" : "light");
-    }
-
-    function toggleLanguage() {
-        setLanguage(language === "javascript" ? "python" : "javascript");
-    }
-    
     const handleSubmit = (e: MouseEvent) => {
         e.preventDefault();
-        alert("entry created");
-    }
+        let newEntry = {
+            journal_id: context.journal.journal_id,
+            record_title: title,
+            content: content
+        };
+        postEntry(newEntry).then(res => history.push(`/journals/${context.journal.journal_id}`));
+    };
 
-    let newValue: string = "console.log('Hello World!'); \nconsole.log('We are killing it');"
-    
+    const postEntry = async (entry: any) => {
+        await axios.post(`${context.API_BASE_URL}/api/v1/record`, entry, config)
+    } ;
+
+    let content: string;
+    let initialValue: string = "";
+    let title = document.getElementById("title")?.nodeValue;
     return(
         <div>
             <NewEntryTitleText>
                 Create a New Entry
             </NewEntryTitleText>
             <NewEntryForm>
+            {/* <br />
                 <Label>
                     Entry Title
-                </Label>
-                <Input type="text" id="title" placeholder="Title" />
+                </Label> */}
                 <br />
+                <Input type="textarea" id="title" placeholder="Title" onKeyUp={e => {
+                        let el: any = e.target;
+                        title = el.value;
+                    }
+                } />
+                <br /><br />
                 {/* <Content  placeholder="Write your content here..."/> */}
-                {/* <Submit onClick={handleSubmit}>
-                    Submit
-                </Submit> */}
+                 
                 <Editor
                     height="50vh"
                     width="50vw" // By default, it fully fits with its parent
                     theme={'dark'}
                     language={language}
-                    value={newValue}
+                    value={initialValue}
                     // editorDidMount={handleEditorDidMount}
                     loading={"Loading..."}
+                    onChange={handleEditorChange}
                 />
+                <Submit onClick={handleSubmit}>
+                    Submit
+                </Submit>
             </NewEntryForm>
         </div>
     )
