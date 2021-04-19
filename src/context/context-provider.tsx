@@ -177,7 +177,6 @@ export default function AppProvider () {
     const [ records, setRecords ] = useState<JournalEntryObject[]>(journalRecords);
     const [ record, setRecord ] = useState<JournalEntryObject>(journalRecord);
     let API_BASE_URL = "http://rh-lb-493719566.us-east-1.elb.amazonaws.com";
-    // let API_BASE_URL = "localhost:8080";
 
     const updateToken = (value: string) => {
         setToken(value.slice(6));
