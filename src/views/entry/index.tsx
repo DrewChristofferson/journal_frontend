@@ -43,11 +43,6 @@ const EntryContent = styled.div`
     line-height: 2em;
 `
 
-interface Context {
-    journalEntryItems: JournalEntryObject;
-    journals: JournalObject;
-};
-
 interface JournalEntryObject {
     record_id: string;
     journal_id: string;
@@ -58,12 +53,11 @@ interface JournalEntryObject {
 };
 
 interface JournalObject {
-    id: string;
-    name: string;
-    date: string;
-    update: string;
-    count: number;
-    owner: string;
+    journal_id: string;
+    user_id: string;
+    journal_name: string;
+    createdAt: number;
+    updatedAt: number;
 };
 
 interface MatchParams {
@@ -71,135 +65,88 @@ interface MatchParams {
     eid: string
   };
 
-const markdown: string = `A paragraph with *emphasis* and **strong importance**.
-
-> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
-
-* Lists
-* [ ] todo
-* [x] done
-
-A table:
-
-| a | b |
-| - | - |
-`
-
-const journalEntryItems: JournalEntryObject[] = [];
-const oneRecord = {
-        record_id: "",
-        journal_id: "",
-        record_title: "",
-        createdAt: "",
-        updatedAt: "",
-        content: ""
-}
-
 function JournalEntry () {
-    const { entryid } = useParams<{ entryid: string }>();
-    const [theme, setTheme] = useState("light");
     const [language, setLanguage] = useState("markdown");
-    const [isEditorReady, setIsEditorReady] = useState(false);
+    const [entry, setEntry] = useState<JournalEntryObject | undefined>();
+    const [journal, setJournal] = useState<JournalObject>();
     const [isEditView, setIsEditView] = useState(false);
     const [displayText, setDisplayText] = useState<string>('')
-    const [markdownContent, setMarkdownContent] = useState<string | undefined>(markdown);
+    const [markdownContent, setMarkdownContent] = useState<string | undefined>();
     const context = useContext(AppContext); 
     let history = useHistory(); 
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
-        //   "Content-Type": "text/plain"
         }
     };
-    // const { journalEntryItems, journals } = React.useContext(AppContext) as ContextType
     let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
+    const { jid } = useParams<{ jid: string }>();
     let parser = new Parser()
     let renderer = new HtmlRenderer()
-    let markdownDisplay = renderer.render(parser.parse(markdown))
-    
 
     useEffect(() => {
-        let temp: string = markdown ? markdown : '';
-        let markdownDisplay: any = renderer.render(parser.parse(temp));
-        setDisplayText(markdownDisplay);
-        getJournalEntry();
+        getEntry();
+        getJournal();
     }, [])
 
-    const getJournalEntry = () => {
-        context.records.forEach(record => {
-            if (entryid === record.record_id){
-                context.updateRecord(record);
-                setDisplayText(context.record.content)
-                console.log(record);
+    const getEntry = async() => {
+        await axios.get(`${context.API_BASE_URL}/api/v1/record/${match?.params.eid}`, config)
+        .then((response) => {
+            console.log(response.data);
+            setEntry(response.data);
+            setMarkdownContent(response.data.content);
+            let markdownDisplay: any = renderer.render(parser.parse(response.data.content));
+            setDisplayText(markdownDisplay);
+            context.updateRecords(response.data);
+        })
+        .catch((e) => console.log(e));
+    }
+
+    const getJournal = async() => {
+        await axios.get(`${context.API_BASE_URL}/api/v1/journal/user`, config)
+        .then((response) => {
+            for (let i = 0; i < response.data.length; i++) {
+                console.log(response.data[i].journal_id, jid)
+                if (response.data[i].journal_id === jid){
+                    setJournal(response.data[i]);
+                }
             }
-        }) 
+        })
+        .catch((e) => e)
     }
-
-    // Monaco editor functions start//
-    function handleEditorDidMount() {
-        setIsEditorReady(true);
-    }
-
-    function toggleTheme() {
-        setTheme(theme === "light" ? "dark" : "light");
-    }
-
-    let newContent:string;
 
     function handleEditorChange(value: string | undefined, event: React.FormEvent<HTMLInputElement>) {
         setMarkdownContent(value)
-        // newContent = String(value); 
       }
 
     const handleEditSubmit = () => {
-        // debugger; 
-        let temp: string = markdownContent ? markdownContent : '';
-        let markdownDisplay: any = renderer.render(parser.parse(temp));
+        let currentContent: string = markdownContent ? markdownContent : '';
+        let markdownDisplay: any = renderer.render(parser.parse(currentContent));
         setDisplayText(markdownDisplay);
-        // debugger; 
         setIsEditView(!isEditView);
-        let updatedEntry = { //including all the items in the JournalObject so that I could use the updateRecord context function. Didn't work though.. 
-            record_id:context.record.record_id,
-            record_title:context.record.record_title,
-            journal_id:context.record.journal_id,
-            createdAt:context.record.createdAt,
-            updatedAt:context.record.updatedAt,
-            content:temp
+        let updatedEntry = { 
+            record_id: match?.params.eid,
+            journal_id: match?.params.jid,
+            record_title: entry?.record_title,
+            content: currentContent
         }
-        // debugger; 
         putEntry(updatedEntry)
-            // .then(res => getJournalEntry())
-            // .then(res => getRecords());
-        context.updateRecord(updatedEntry);
-        // setMarkdownContent(updatedEntry.content); //need to update the markdown content somehow.. 
-        // getJournalEntry(); //adding this totally messes up the record updates... 
-        handleEditToggle();
     };
 
-    const putEntry = async (entry: any) => {
-        await axios.put(`${context.API_BASE_URL}/api/v1/record/${context.record.record_id}`, 
-            entry, 
+    const putEntry = async (newEntry: any) => {
+        await axios.put(`${context.API_BASE_URL}/api/v1/record/${match?.params.eid}`, 
+            newEntry, 
             config)
     };
-    // Monaco editor functions end//
 
     const handleEditToggle = () => {
         setIsEditView(!isEditView);
     }
 
-    const getRecords = async() => {
-        await axios.get(`${context.API_BASE_URL}/api/v1/record/${context.record.record_id}`, config)
-        .then((response) => {
-                context.updateRecords(response.data);
-        })
-        .catch((e) => e)
-        // debugger; 
-    }
-
     return(
         <JournalContainer>
             <BreadcrumbContainer>
-                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${match?.params?.jid}`}>{context.journal?.journal_name}</Link> &gt; <Link to={`/journals/${match?.params?.jid}/${match?.params?.eid}`}>{context.record?.record_title}</Link>
+                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${match?.params?.jid}`}>{journal?.journal_name}</Link> &gt; <Link to={`/journals/${match?.params?.jid}/${match?.params?.eid}`}>{entry?.record_title}</Link>
             </BreadcrumbContainer>
 
             <JournalHeader>
@@ -207,11 +154,16 @@ function JournalEntry () {
                     
                     <JournalTitleText>
                         {
-                            context.record.record_title
+                            entry?.record_title
                         }
                     </JournalTitleText>
                     <ButtonContainer>
-                        <Button onClick={handleEditToggle}>Edit</Button>
+                        {
+                            isEditView ?
+                            <></>
+                            :
+                            <Button onClick={handleEditToggle}>Edit</Button>
+                        } 
                     </ButtonContainer> 
                 </JournalTitleGroup>
                 
@@ -223,19 +175,17 @@ function JournalEntry () {
                         height="50vh" // By default, it fully fits with its parent
                         theme={'dark'}
                         language={language}
-                        value= {displayText}
-                        // editorDidMount={handleEditorDidMount}
+                        value= {markdownContent}
                         loading={"Loading..."}
                         onChange={handleEditorChange}
                     />
-                    {/* <button onClick={handleEditSubmit}>Done</button> */}
+                    <Button onClick={() => setIsEditView(false)}>Cancel</Button>
                     <Button onClick={handleEditSubmit}>Done</Button>
                 </div>
                 
                 : /*** if false (not the editor view) ***/ 
-                // <ReactMarkdown source={markdownContent}/>
                 <EntryContent>
-                    <div dangerouslySetInnerHTML={ {__html: displayText} } />  {/* normally this used displayText, but displayText doesn't update immediately?  */}
+                    <div dangerouslySetInnerHTML={ {__html: displayText} } />
                 </EntryContent>
             }
         </JournalContainer>
