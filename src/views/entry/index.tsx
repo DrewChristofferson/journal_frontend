@@ -108,6 +108,7 @@ function JournalEntry () {
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
+        //   "Content-Type": "text/plain"
         }
     };
     // const { journalEntryItems, journals } = React.useContext(AppContext) as ContextType
@@ -143,27 +144,56 @@ function JournalEntry () {
         setTheme(theme === "light" ? "dark" : "light");
     }
 
+    let newContent:string;
+
     function handleEditorChange(value: string | undefined, event: React.FormEvent<HTMLInputElement>) {
         setMarkdownContent(value)
-        putEntry(value).then(res => history.push(`/journals/${context.journal.journal_id}/${context.record.record_id}`));
+        // newContent = String(value); 
       }
 
     const handleEditSubmit = () => {
+        // debugger; 
         let temp: string = markdownContent ? markdownContent : '';
         let markdownDisplay: any = renderer.render(parser.parse(temp));
         setDisplayText(markdownDisplay);
+        // debugger; 
         setIsEditView(!isEditView);
-        // context.updateRecord()
-        // putEntry(updatedEntry).then(res => history.push(`/journals/${context.journal.journal_id}`));
+        let updatedEntry = { //including all the items in the JournalObject so that I could use the updateRecord context function. Didn't work though.. 
+            record_id:context.record.record_id,
+            record_title:context.record.record_title,
+            journal_id:context.record.journal_id,
+            createdAt:context.record.createdAt,
+            updatedAt:context.record.updatedAt,
+            content:temp
+        }
+        // debugger; 
+        putEntry(updatedEntry)
+            // .then(res => getJournalEntry())
+            // .then(res => getRecords());
+        context.updateRecord(updatedEntry);
+        // setMarkdownContent(updatedEntry.content); //need to update the markdown content somehow.. 
+        // getJournalEntry(); //adding this totally messes up the record updates... 
+        handleEditToggle();
     };
 
     const putEntry = async (entry: any) => {
-        await axios.put(`${context.API_BASE_URL}/api/v1/record`, entry, config)
+        await axios.put(`${context.API_BASE_URL}/api/v1/record/${context.record.record_id}`, 
+            entry, 
+            config)
     };
     // Monaco editor functions end//
 
     const handleEditToggle = () => {
         setIsEditView(!isEditView);
+    }
+
+    const getRecords = async() => {
+        await axios.get(`${context.API_BASE_URL}/api/v1/record/${context.record.record_id}`, config)
+        .then((response) => {
+                context.updateRecords(response.data);
+        })
+        .catch((e) => e)
+        // debugger; 
     }
 
     return(
@@ -188,12 +218,12 @@ function JournalEntry () {
             </JournalHeader>
             {
                 isEditView ?
-                <div>
+                <div> 
                     <Editor
                         height="50vh" // By default, it fully fits with its parent
                         theme={'dark'}
                         language={language}
-                        value={context.record.content}
+                        value= {displayText}
                         // editorDidMount={handleEditorDidMount}
                         loading={"Loading..."}
                         onChange={handleEditorChange}
@@ -202,9 +232,10 @@ function JournalEntry () {
                     <Button onClick={handleEditSubmit}>Done</Button>
                 </div>
                 
-                :
+                : /*** if false (not the editor view) ***/ 
+                // <ReactMarkdown source={markdownContent}/>
                 <EntryContent>
-                    <div dangerouslySetInnerHTML={ {__html: context.record.content} } />
+                    <div dangerouslySetInnerHTML={ {__html: displayText} } />  {/* normally this used displayText, but displayText doesn't update immediately?  */}
                 </EntryContent>
             }
         </JournalContainer>

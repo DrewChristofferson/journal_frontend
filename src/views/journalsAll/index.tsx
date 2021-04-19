@@ -113,8 +113,11 @@ function JournalsAll () {
         }
     };
 
-    const handleJournalDelete = async (id: string) => {
-        await axios.delete(`${context.API_BASE_URL}/api/v1/journal/${id}`, config)
+    const handleJournalDelete = async (id: string) => { 
+        if (window.confirm("Are you sure you want to delete this journal? This cannot be undone.")) { //confirm the deletion of the journal
+            //if yes, delete the journal
+            await axios.delete(`${context.API_BASE_URL}/api/v1/journal/${id}`, config)
+        }
         getJournals();
     };
 
