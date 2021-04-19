@@ -39,6 +39,8 @@ const PromoContainer = styled.div`
 `
 
 interface MyFormValues {
+    name: string; 
+    email: string; 
     username: string;
     password: string;
 
@@ -46,7 +48,7 @@ interface MyFormValues {
 
 export default function Login() {
     const history = useHistory();
-    const initialValues: MyFormValues = { username: '', password: '' };
+    const initialValues: MyFormValues = { name:'', email: '', username: '', password: '' };
     const [showError, setShowError] = useState<Boolean>(false);
     const context = useContext(AppContext);
 
@@ -54,8 +56,10 @@ export default function Login() {
     
         axios({
             method: 'post',
-            url: `${context.API_BASE_URL}/login`,
+            url: `${context.API_BASE_URL}/api/v1/user`,
             data: {
+              name: values.name,
+              email: values.email,
               username: values.username,
               password: values.password
             }
@@ -64,8 +68,8 @@ export default function Login() {
                 if(response.status === 200){
                     history.push("/journals");
                     context.updateToken(response.headers.authorization)
-                } else if (response.status === 403){
-                    console.log("invalid username or password");
+                } else if (response.status === 405){
+                    console.log("Method Not Allowed");
                 } else {
                     console.log("server error");
                 }
@@ -90,13 +94,21 @@ export default function Login() {
             <EntryPage>
                 {/* <PageHeader to="/">Awesome Journal</PageHeader> */}
                 <EntryCard>
-                    <h1>Login</h1>
+                    <h1>Sign Up</h1>
                     <Formik 
                         initialValues={initialValues}
                         onSubmit={(values: MyFormValues, actions: FormikHelpers<MyFormValues>) => {
                         handleSubmit( values, actions );
                       }}>
                         <Form>
+                            <InputGroup>
+                                <label htmlFor='name'>Name</label>
+                                <Field name='name' type='text' placeholder='John Turner' as={LoginInput} />
+                            </InputGroup>
+                            <InputGroup>
+                                <label htmlFor='email'>Email</label>
+                                <Field name='email' type='text' placeholder='jturner@byu.edu' as={LoginInput} />
+                            </InputGroup>
                             <InputGroup>
                                 <label htmlFor='username'>Username</label>
                                 <Field name='username' type='text' placeholder='JohnT' as={LoginInput} />
@@ -105,18 +117,18 @@ export default function Login() {
                                 <label htmlFor='password'>Password</label>
                                 <Field name='password' type='password' placeholder='thisgrouprocks' as={LoginInput} />
                             </InputGroup>
-                            <LoginButton type='submit' full>Sign In</LoginButton>
+                            <LoginButton type='submit' full>Sign Up</LoginButton>
                         </Form> 
                     </Formik>
                     {
                         showError ?
-                        <p style={{color: 'red'}}>Invalid username or password</p>
+                        <p style={{color: 'red'}}>Username already exists</p>
                         :
                         <></>
                     }   
                     <span>
-                        Don't have an account?
-                        <Link to="/signup">Sign Up</Link>
+                        Already have an account?
+                        <Link to="/signup">Sign In</Link>
                     </span>
                 </EntryCard>
             </EntryPage>
@@ -124,3 +136,8 @@ export default function Login() {
         </Container>
     );
 }
+
+
+
+
+
