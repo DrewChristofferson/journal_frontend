@@ -33,6 +33,9 @@ function App() {
           <Sidebar />
           <AppContainer>
               <Switch>
+              <Route path="/journals/:jid/newentry">
+                  <NewEntry />        
+                </Route>
                 <Route path="/journals/:jid/:entryid">
                   <JournalEntry />        
                 </Route>

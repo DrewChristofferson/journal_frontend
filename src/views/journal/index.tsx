@@ -65,13 +65,12 @@ const TableItem = styled.td`
     padding-left: 10px;
 `
 interface JournalObject {
-    id: string;
-    name: string;
-    date: string;
-    update: string;
-    count: number;
-    owner: string;
-}
+    journal_id: string;
+    user_id: string;
+    journal_name: string;
+    createdAt: number;
+    updatedAt: number;
+};
 
 const journalItems: JournalObject[] = [
 
@@ -100,8 +99,9 @@ interface MatchParams {
 
 function Journal () {
     let history = useHistory();
-    let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     const context = useContext(AppContext);
+    const [records, setRecords] = useState<[JournalEntryObject] | undefined>();
+    const [journal, setJournal] = useState<JournalObject>();
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -109,13 +109,39 @@ function Journal () {
     }
     const { jid } = useParams<{ jid: string }>();
 
+    useEffect(() => {
+        getJournal();
+        getRecords();
+    }, [])
+
+    const getJournal = async() => {
+        await axios.get(`${context.API_BASE_URL}/api/v1/journal/user`, config)
+        .then((response) => {
+            for (let i = 0; i < response.data.length; i++) {
+                console.log(response.data[i].journal_id, jid)
+                if (response.data[i].journal_id === jid){
+                    setJournal(response.data[i]);
+                }
+            }
+        })
+        .catch((e) => e)
+    }
+
+    const getRecords = async() => {
+        await axios.get(`${context.API_BASE_URL}/api/v1/record/journal/` + jid, config)
+        .then((response) => {
+            setRecords(response.data)
+            context.updateRecords(response.data);
+        })
+        .catch((e) => e)
+    }
+
     const handleJournalEntryClick = (id: string) => {
         history.push(`/journals/${jid}/${id}`)
     }
 
     const handleNewEntryClick = () => {
-        history.push("/newentry");
-        console.log(context.journal);
+        history.push(`/journals/${jid}/newentry`);
     }
 
     const handleRecordDelete = async (id: string) => {
@@ -124,32 +150,18 @@ function Journal () {
             await axios.delete(`${context.API_BASE_URL}/api/v1/record/${id}`, config)
             .then((res) => getRecords());
         }
-
-        // console.log(context.records)
     };
-
-    useEffect(() => {
-        getRecords();
-    }, context.records)
-
-    const getRecords = async() => {
-        await axios.get(`${context.API_BASE_URL}/api/v1/record/journal/` + jid, config)
-        .then((response) => {
-                context.updateRecords(response.data);
-        })
-        .catch((e) => e)
-    }
 
     return(
         <JournalContainer>
             <BreadcrumbContainer>
-                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${match?.params?.jid}`}>{context.journal?.journal_name}</Link>
+                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${jid}`}>{journal?.journal_name}</Link>
             </BreadcrumbContainer>
             <JournalHeader>
                 <JournalTitleGroup>
                     <JournalTitleText>
                         {
-                            context.journal.journal_name
+                            journal?.journal_name
                         }
                     </JournalTitleText>
                     <AddIcon size={30} onClick={handleNewEntryClick}/>
@@ -170,7 +182,7 @@ function Journal () {
                 </thead>
                 <tbody>
                     {
-                        context.records.map(item => {
+                        records?.map(item => {
                                 return (
                                     <TableRow key={item.record_id}>
                                         <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{item.record_title}</TableItem>
