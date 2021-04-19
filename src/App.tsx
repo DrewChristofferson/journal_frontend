@@ -9,6 +9,7 @@ import Journal from './views/journal/index'
 import NewEntry from './views/newentry/index'
 import JournalEntry from './views/entry/index'
 import Login from './views/login/index'
+import SignUp from './views/signup/index'
 
 const AppContainer = styled.div`
   margin-left: 400px;
@@ -24,6 +25,9 @@ function App() {
       <Switch>
         <Route path="/login">
           <Login />          
+        </Route>
+        <Route path="/signup">
+          <SignUp />          
         </Route>
         <Route path="/">
           <Sidebar />
