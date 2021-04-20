@@ -66,8 +66,7 @@ export default function Login() {
           }).then(
             function(response) {
                 if(response.status === 200){
-                    history.push("/journals");
-                    context.updateToken(response.headers.authorization)
+                    login(values)
                 } else if (response.status === 405){
                     console.log("Method Not Allowed");
                 } else {
@@ -80,8 +79,34 @@ export default function Login() {
             }
         );
         actions.setSubmitting(false);
+    } 
+
+    const login = (values: MyFormValues) => {
+        axios({
+            method: 'post',
+            url: `${context.API_BASE_URL}/login`,
+            data: {
+              username: values.username,
+              password: values.password
+            }
+          }).then(
+            function(response) {
+                if(response.status === 200){    
+                    context.updateToken(response.headers.authorization);
+                    history.push("/journals");
+                } else if (response.status === 403){
+                    console.log("invalid username or password");
+                } else {
+                    console.log("server error");
+                }
+            }
+        ).catch(
+            function(e) {
+                setShowError(true);
+            }
+        );
+    
     }
-    debugger; 
 
     return (
         <Container>
@@ -128,7 +153,7 @@ export default function Login() {
                     }   
                     <span>
                         Already have an account?
-                        <Link to="/signup">Sign In</Link>
+                        <Link to="/login">Sign In</Link>
                     </span>
                 </EntryCard>
             </EntryPage>

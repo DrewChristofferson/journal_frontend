@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { Link } from "react-router-dom"
 import { IoIosJournal } from 'react-icons/io';
 import { FaPenAlt } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
+import AppContext from './context/context';
 
 
 
@@ -61,6 +62,7 @@ const links: any[][] = [
 
 
 function Sidebar () {
+    const context = useContext(AppContext);
     return(
         <SidebarContainer>
             <SidebarHeader>
@@ -81,6 +83,7 @@ function Sidebar () {
                        
                     })
                 }
+                <NavLink key="Log Out" to="/login" onClick={() => context.logout()}>Log Out</NavLink>
             </SidebarLinks>
         </SidebarContainer>
     )

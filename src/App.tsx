@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, ReactNode } from 'react';
 import styled from 'styled-components'
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
 import AppContext from './context/context'
@@ -16,9 +16,34 @@ const AppContainer = styled.div`
   margin-top: 50px;
   margin-right: 100px;
 `
+interface IProps {
+  children: ReactNode;
+  // any other props that come into the component
+}
+
+function PrivateRoute({ children, ...rest }: any) {
+  const context = useContext(AppContext);
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        localStorage.getItem('token') ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location }
+            }}
+          />
+        )
+      }
+    />
+  );
+}
 
 function App() {
-  const context = useContext(AppContext);
+  
   
   return (
     <Router>
@@ -29,7 +54,7 @@ function App() {
         <Route path="/signup">
           <SignUp />          
         </Route>
-        <Route path="/">
+        <PrivateRoute path="/">
           <Sidebar />
           <AppContainer>
               <Switch>
@@ -59,7 +84,7 @@ function App() {
                 </Route>
               </Switch>
             </AppContainer>
-        </Route>
+        </PrivateRoute>
       </Switch>
       
         
