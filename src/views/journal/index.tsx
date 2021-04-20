@@ -6,6 +6,8 @@ import { useHistory, useParams, Link, useRouteMatch } from "react-router-dom";
 // import { contextType } from 'react-commonmark';
 import AppContext from '../../context/context';
 import axios from 'axios';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 
 const JournalContainer = styled.div`
@@ -64,6 +66,23 @@ const TableItem = styled.td`
     text-align: left;
     padding-left: 10px;
 `
+
+const LoadingContainer = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+
+const EmptyJournalContatiner = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+`
+
+
 interface JournalObject {
     journal_id: string;
     user_id: string;
@@ -102,6 +121,7 @@ function Journal () {
     const context = useContext(AppContext);
     const [records, setRecords] = useState<[JournalEntryObject] | undefined>();
     const [journal, setJournal] = useState<JournalObject>();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -131,7 +151,7 @@ function Journal () {
         await axios.get(`${context.API_BASE_URL}/api/v1/record/journal/` + jid, config)
         .then((response) => {
             setRecords(response.data)
-            // context.updateRecords(response.data);
+            setIsLoading(false)
         })
         .catch((e) => e)
     }
@@ -152,52 +172,76 @@ function Journal () {
         }
     };
 
-    return(
-        <JournalContainer>
-            <BreadcrumbContainer>
-                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${jid}`}>{journal?.journal_name}</Link>
-            </BreadcrumbContainer>
-            <JournalHeader>
-                <JournalTitleGroup>
-                    <JournalTitleText>
+    if(isLoading){
+        return(
+            <LoadingContainer>
+                <CircularProgress/>
+            </LoadingContainer>
+        )
+    } else {
+        return(
+            <JournalContainer>
+                <BreadcrumbContainer>
+                    <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${jid}`}>{journal?.journal_name}</Link>
+                </BreadcrumbContainer>
+                <JournalHeader>
+                    <JournalTitleGroup>
+                        <JournalTitleText>
+                            {
+                                journal?.journal_name
+                            }
+                        </JournalTitleText>
+                        <AddIcon size={30} onClick={handleNewEntryClick}/>
+                    </JournalTitleGroup>
+                    {/* <Searchbar placeholder="Search" /> */}
+                </JournalHeader>
+                <Table>
+                    <thead>
+                        <TableRowHeading>
+                            {
+                                journalColumns.map(heading => {
+                                    return (
+                                        <TableHeader key={heading}>{heading}</TableHeader>
+                                    )
+                                })
+                            }
+                        </TableRowHeading>
+                    </thead>
+                    {
+                        records && records[0] ?
+                        <tbody>
                         {
-                            journal?.journal_name
-                        }
-                    </JournalTitleText>
-                    <AddIcon size={30} onClick={handleNewEntryClick}/>
-                </JournalTitleGroup>
-                {/* <Searchbar placeholder="Search" /> */}
-            </JournalHeader>
-            <Table>
-                <thead>
-                    <TableRowHeading>
-                        {
-                            journalColumns.map(heading => {
-                                return (
-                                    <TableHeader key={heading}>{heading}</TableHeader>
-                                )
+                            records?.map(item => {
+                                    return (
+                                        <TableRow key={item.record_id}>
+                                            <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{item.record_title}</TableItem>
+                                            <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{new Date(item.createdAt).toLocaleString()}</TableItem>
+                                            <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{new Date(item.updatedAt).toLocaleString()}</TableItem>
+                                            <TableItem onClick={() => handleRecordDelete(item.record_id)}>❌</TableItem>
+                                        </TableRow>
+                                    )
+                                
                             })
                         }
-                    </TableRowHeading>
-                </thead>
-                <tbody>
-                    {
-                        records?.map(item => {
-                                return (
-                                    <TableRow key={item.record_id}>
-                                        <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{item.record_title}</TableItem>
-                                        <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{new Date(item.createdAt).toLocaleString()}</TableItem>
-                                        <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{new Date(item.updatedAt).toLocaleString()}</TableItem>
-                                        <TableItem onClick={() => handleRecordDelete(item.record_id)}>❌</TableItem>
-                                    </TableRow>
-                                )
-                            
-                        })
+                        </tbody>
+                        :
+                        <></>
                     }
-                </tbody>
-            </Table>
-        </JournalContainer>
-    )
+                    
+                </Table>
+                {
+                    records && records[0] ?
+                    <></>
+                    :
+                    <EmptyJournalContatiner>
+                        <h4>Create your first entry! 🎉</h4>
+                        <AddIcon size={30} onClick={handleNewEntryClick}/>
+                    </EmptyJournalContatiner>
+                }
+            </JournalContainer>
+        )
+    }
+    
 }
 
 export default Journal;

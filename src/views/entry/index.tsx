@@ -7,6 +7,8 @@ import Editor from "@monaco-editor/react";
 import Button from '../../Components/Button/Button';
 import AppContext from '../../context/context';
 import axios from 'axios';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 const BreadcrumbContainer = styled.div`
     padding-bottom: 20px;
@@ -42,6 +44,17 @@ const JournalTitleText = styled.div`
 const EntryContent = styled.div`
     line-height: 2em;
 `
+const ButtonsContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+`
+const LoadingContainer = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
 
 interface JournalEntryObject {
     record_id: string;
@@ -72,6 +85,7 @@ function JournalEntry () {
     const [isEditView, setIsEditView] = useState(false);
     const [displayText, setDisplayText] = useState<string>('')
     const [markdownContent, setMarkdownContent] = useState<string | undefined>();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const context = useContext(AppContext); 
     let history = useHistory(); 
     const config = {
@@ -111,6 +125,7 @@ function JournalEntry () {
                     setJournal(response.data[i]);
                 }
             }
+            setIsLoading(false)
         })
         .catch((e) => e)
     }
@@ -143,53 +158,65 @@ function JournalEntry () {
         setIsEditView(!isEditView);
     }
 
-    return(
-        <JournalContainer>
-            <BreadcrumbContainer>
-                <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${match?.params?.jid}`}>{journal?.journal_name}</Link> &gt; <Link to={`/journals/${match?.params?.jid}/${match?.params?.eid}`}>{entry?.record_title}</Link>
-            </BreadcrumbContainer>
-
-            <JournalHeader>
-                <JournalTitleGroup>
+    if (isLoading) {
+        return(
+            <LoadingContainer>
+                <CircularProgress/>
+            </LoadingContainer>
+        )
+    } else {
+        return(
+            <JournalContainer>
+                <BreadcrumbContainer>
+                    <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${match?.params?.jid}`}>{journal?.journal_name}</Link> &gt; <Link to={`/journals/${match?.params?.jid}/${match?.params?.eid}`}>{entry?.record_title}</Link>
+                </BreadcrumbContainer>
+    
+                <JournalHeader>
+                    <JournalTitleGroup>
+                        
+                        <JournalTitleText>
+                            {
+                                entry?.record_title
+                            }
+                        </JournalTitleText>
+                        <ButtonContainer>
+                            {
+                                isEditView ?
+                                <></>
+                                :
+                                <Button onClick={handleEditToggle}>Edit</Button>
+                            } 
+                        </ButtonContainer> 
+                    </JournalTitleGroup>
                     
-                    <JournalTitleText>
-                        {
-                            entry?.record_title
-                        }
-                    </JournalTitleText>
-                    <ButtonContainer>
-                        {
-                            isEditView ?
-                            <></>
-                            :
-                            <Button onClick={handleEditToggle}>Edit</Button>
-                        } 
-                    </ButtonContainer> 
-                </JournalTitleGroup>
-                
-            </JournalHeader>
-            {
-                isEditView ?
-                <div> 
-                    <Editor
-                        height="50vh" // By default, it fully fits with its parent
-                        theme={'dark'}
-                        language={language}
-                        value= {markdownContent}
-                        loading={"Loading..."}
-                        onChange={handleEditorChange}
-                    />
-                    <Button onClick={() => setIsEditView(false)}>Cancel</Button>
-                    <Button onClick={handleEditSubmit}>Done</Button>
-                </div>
-                
-                : /*** if false (not the editor view) ***/ 
-                <EntryContent>
-                    <div dangerouslySetInnerHTML={ {__html: displayText} } />
-                </EntryContent>
-            }
-        </JournalContainer>
-    )
+                </JournalHeader>
+                {
+                    isEditView ?
+                    <div> 
+                        <Editor
+                            height="50vh" // By default, it fully fits with its parent
+                            theme={'dark'}
+                            language={language}
+                            value= {markdownContent}
+                            loading={"Loading..."}
+                            onChange={handleEditorChange}
+                        />
+                        <ButtonsContainer>
+                            <Button onClick={() => setIsEditView(false)} variant='secondary'>Cancel</Button>
+                            <Button onClick={handleEditSubmit}>Done</Button>
+                        </ButtonsContainer>
+                        
+                    </div>
+                    
+                    : /*** if false (not the editor view) ***/ 
+                    <EntryContent>
+                        <div dangerouslySetInnerHTML={ {__html: displayText} } />
+                    </EntryContent>
+                }
+            </JournalContainer>
+        )
+    }
+    
 }
 
 export default JournalEntry;

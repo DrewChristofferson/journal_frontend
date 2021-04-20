@@ -4,6 +4,8 @@ import { Link } from "react-router-dom"
 import { IoIosJournal } from 'react-icons/io';
 import { FaPenAlt } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
+import { BiLogOut } from 'react-icons/bi';
+import { IoMdBookmarks } from 'react-icons/io';
 import AppContext from './context/context';
 
 
@@ -17,11 +19,21 @@ const SidebarContainer = styled.div`
     color: white;
     padding-top: 20px;
 `
+const Header = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+`
 
 const SidebarHeader = styled.div`
     font-size: 32px;
     font-weight: 700;
-    padding-left: 20px;
+`
+
+const SidebarSubtitle = styled.div`
+    font-size: 20px;
+    padding-top: 10px;
 `
 
 const SidebarLinks = styled.div`
@@ -55,9 +67,9 @@ const NavText = styled.div`
 // `
 
 const links: any[][] = [
-    ["My Journals", "/journals", IoIosJournal],
-    ["Create New Entry", "/createnewentry", FaPenAlt],
-    ["Settings", "/settings", AiFillSetting]
+    ["My Journals", "/journals", < IoIosJournal size={22} />],
+    ["Create New Entry", "/createnewentry", < FaPenAlt size={22} />],
+    ["Settings", "/settings", < AiFillSetting size={22} />]
 ]
 
 
@@ -65,15 +77,21 @@ function Sidebar () {
     const context = useContext(AppContext);
     return(
         <SidebarContainer>
-            <SidebarHeader>
-                DevJournal
-            </SidebarHeader>
+            <Header>
+                <IoMdBookmarks size='60'/>
+                <SidebarHeader>
+                    DevJournal
+                </SidebarHeader>
+                <SidebarSubtitle>
+                    Hi, {context.userData.name} 👋
+                </SidebarSubtitle>
+            </Header>
             <SidebarLinks>
                 {
                     links.map(link => {
                        return (
                            <NavLink key={link[0]} to={link[1]}>
-                                < IoIosJournal size={22} />                                
+                                {link[2]}                                
                                 <NavText>
                                     {link[0]}
                                 </NavText>
@@ -83,7 +101,12 @@ function Sidebar () {
                        
                     })
                 }
-                <NavLink key="Log Out" to="/login" onClick={() => context.logout()}>Log Out</NavLink>
+                <NavLink key="Log Out" to="/login" onClick={() => context.logout()}>
+                    < BiLogOut size={22} />                                
+                    <NavText>
+                        Log Out
+                    </NavText>
+                </NavLink>
             </SidebarLinks>
         </SidebarContainer>
     )
