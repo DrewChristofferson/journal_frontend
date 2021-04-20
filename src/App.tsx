@@ -11,6 +11,7 @@ import JournalEntry from './views/entry/index'
 import Login from './views/login/index'
 import SignUp from './views/signup/index'
 import CreateNewEntry from './views/createnewentry/index'
+import Settings from './views/settings/index'
 
 const AppContainer = styled.div`
   margin-left: 400px;
@@ -78,9 +79,7 @@ function App() {
                   <CreateNewEntry />          
                 </Route>
                 <Route path="/settings">
-                  <div>
-                    Settings Screen   
-                  </div>           
+                  <Settings />          
                 </Route>
                 
                 <Route path="/">
