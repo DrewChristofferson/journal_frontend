@@ -95,6 +95,8 @@ interface JournalObjectDB {
     updatedAt: number;
 };
 
+
+
 /** The context provider for our app */
 export default function AppProvider () {
     const [ journalEntryItems, setJournalEntryItems ] = useState<JournalEntryObject[]>([]);
@@ -136,6 +138,11 @@ export default function AppProvider () {
         .then((response) => {
             // console.log(response.data)
             setUserData(response.data);
+            console.log(response.data.userid)
+            localStorage.setItem('userid', response.data.userid);
+            localStorage.setItem('name', response.data.name);
+            localStorage.setItem('email', response.data.email);
+            localStorage.setItem('username', response.data.username);
         })
         .catch((e) => e)
     };
@@ -170,6 +177,10 @@ export default function AppProvider () {
         setIsAuthenticated(false);
         setUserData(user);
         localStorage.removeItem('token');
+        localStorage.removeItem('userid');
+        localStorage.removeItem('username');
+        localStorage.removeItem('name');
+        localStorage.removeItem('email');
         // localStorage.setItem('journals', value);
     };
 
