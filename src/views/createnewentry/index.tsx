@@ -96,6 +96,7 @@ export default function CreateNewEntry () {
             record_title: entryTitle,
             content: entryContent
         };
+        // if()
         postEntry(newEntry).then(res => {
             history.push(`/journals/${jid}`)
         });
