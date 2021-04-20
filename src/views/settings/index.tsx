@@ -102,7 +102,7 @@ function Settings() {
         <Container>
             <Header>
                 <SettingsTitleText>Settings</SettingsTitleText>
-                {
+                {/* {
                     isEditing ?
                     <></>
                     :
@@ -110,7 +110,7 @@ function Settings() {
                         <Button style={{height: '50%'}} onClick={() => setIsEditing(true)}>Edit</Button>
                     </ButtonContainer>
                     
-                }
+                } */}
             </Header>
             <ContentWrapper>
                 <ContentRow>
@@ -121,7 +121,7 @@ function Settings() {
                         isEditing ?
                         <Input style={{width: '100%'}} value={name} onChange={updateName} />
                         :
-                        <SettingsContent>{context.userData.name}</SettingsContent>  
+                        <SettingsContent>{localStorage.getItem('name')}</SettingsContent>  
                     }
                     
                 </ContentRow>
@@ -133,7 +133,7 @@ function Settings() {
                         isEditing ?
                         <Input style={{width: '100%'}} value={username} onChange={updateUsername} />
                         :
-                        <SettingsContent>{context.userData.username}</SettingsContent>  
+                        <SettingsContent>{localStorage.getItem('username')}</SettingsContent>  
                     }
                 </ContentRow>
                 <ContentRow>
@@ -144,7 +144,7 @@ function Settings() {
                         isEditing ?
                         <Input style={{width: '100%'}} value={email} onChange={updateEmail} />
                         :
-                        <SettingsContent>{context.userData.email}</SettingsContent>  
+                        <SettingsContent>{localStorage.getItem('email')}</SettingsContent>  
                     }
                 </ContentRow>
                 
