@@ -48,7 +48,7 @@ function App() {
   
   
   return (
-    <Router>
+    // <Router>
       <Switch>
         <Route path="/login">
           <Login />          
@@ -92,7 +92,7 @@ function App() {
       
         
         
-    </Router>
+    // </Router>
   );
 }
 
