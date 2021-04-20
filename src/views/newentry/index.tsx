@@ -96,9 +96,13 @@ function NewEntry () {
             record_title: entryTitle,
             content: entryContent
         };
-        postEntry(newEntry).then(res => {
-            history.push(`/journals/${jid}`)
-        });
+        if(!entryTitle || !entryContent){
+            alert("please enter a title and entry content")
+        } else {
+            postEntry(newEntry).then(res => {
+                history.push(`/journals/${jid}`)
+            });
+        }
     };
 
     function handleEditorChange(value: string | undefined, event: React.FormEvent<HTMLInputElement>) {
