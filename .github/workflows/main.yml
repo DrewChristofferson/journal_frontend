@@ -1,5 +1,6 @@
 name: Production Build & S3 Sync
 on:
+  pull_request:
   push:
     branches:
       - master
