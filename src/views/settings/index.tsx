@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
 import axios from 'axios';
 import AppContext from '../../context/context';
+import Button from '../../Components/Button/Button'
+import Input from '../../Components/Input/Input'
 
 const Container = styled.div`
     display: flex;
@@ -9,6 +11,36 @@ const Container = styled.div`
 `
 const Header = styled.div`
     display: flex;
+`
+const ButtonContainer = styled.div`
+    display: flex;
+    align-items: center;
+    padding-left: 50px;
+`
+const ContentWrapper = styled.div`
+    padding-top: 80px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+`
+const ContentRow = styled.div`
+    padding-top: 30px;
+    margin-right: 100px;
+`
+const EditButtons = styled.div`
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 100px;
+`
+
+const SettingsTitleText = styled.div`
+    font-size: 42px;
+`
+const SettingsSubTitleText = styled.div`
+    font-size: 30px;
+`
+const SettingsContent = styled.div`
+    font-size: 24px;
 `
 
 function Settings() {
@@ -69,60 +101,66 @@ function Settings() {
     return (
         <Container>
             <Header>
-                <h2>Settings</h2>
+                <SettingsTitleText>Settings</SettingsTitleText>
                 {
                     isEditing ?
                     <></>
                     :
-                    <button onClick={() => setIsEditing(true)}>Edit</button>
+                    <ButtonContainer>
+                        <Button style={{height: '50%'}} onClick={() => setIsEditing(true)}>Edit</Button>
+                    </ButtonContainer>
+                    
                 }
             </Header>
-            <div>
-                <h5>
-                    Name
-                </h5>
-                {
-                    isEditing ?
-                    <input value={name} onChange={updateName} />
-                    :
-                    <p>{context.userData.name}</p>  
-                }
+            <ContentWrapper>
+                <ContentRow>
+                    <SettingsSubTitleText>
+                        Name
+                    </SettingsSubTitleText>
+                    {
+                        isEditing ?
+                        <Input style={{width: '100%'}} value={name} onChange={updateName} />
+                        :
+                        <SettingsContent>{context.userData.name}</SettingsContent>  
+                    }
+                    
+                </ContentRow>
+                <ContentRow>
+                    <SettingsSubTitleText>
+                        Username
+                    </SettingsSubTitleText>
+                    {
+                        isEditing ?
+                        <Input style={{width: '100%'}} value={username} onChange={updateUsername} />
+                        :
+                        <SettingsContent>{context.userData.username}</SettingsContent>  
+                    }
+                </ContentRow>
+                <ContentRow>
+                    <SettingsSubTitleText>
+                        Email
+                    </SettingsSubTitleText>
+                    {
+                        isEditing ?
+                        <Input style={{width: '100%'}} value={email} onChange={updateEmail} />
+                        :
+                        <SettingsContent>{context.userData.email}</SettingsContent>  
+                    }
+                </ContentRow>
                 
-            </div>
-            <div>
-                <h5>
-                    Username
-                </h5>
-                {
-                    isEditing ?
-                    <input value={username} onChange={updateUsername} />
-                    :
-                    <p>{context.userData.username}</p>  
-                }
-            </div>
-            <div>
-                <h5>
-                    Email
-                </h5>
-                {
-                    isEditing ?
-                    <input value={email} onChange={updateEmail} />
-                    :
-                    <p>{context.userData.email}</p>  
-                }
-            </div>
-            <div>
+            </ContentWrapper>
+            <EditButtons>
                 {
                     isEditing ?
                     <div>
-                    <button onClick={() => setIsEditing(false)}>Cancel</button>
-                    <button onClick={submit}>Done</button>
+                    <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
+                    <Button onClick={submit}>Done</Button>
                     </div>
                     :
                     <></>
                 }
-            </div>
-            
+            </EditButtons>
+        
 
         </Container>
     )

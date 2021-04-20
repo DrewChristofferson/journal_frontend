@@ -11,6 +11,7 @@ const ButtonStyle = styled.button`
     font-size: 16px;
     border-radius: 4px;
     cursor: pointer;
+    margin: 10px 15px;
 `
 
 function Button (props) {
