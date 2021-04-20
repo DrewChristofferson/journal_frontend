@@ -181,11 +181,11 @@ export default function AppProvider () {
     const history = useHistory();
 
     const updateToken = (value: string) => {
-        console.log(isAuthenticated, value);
+        // console.log(isAuthenticated, value);
         setToken(value.slice(6));
         setIsAuthenticated(true);
         localStorage.setItem('token', value.slice(6));
-        console.log(isAuthenticated);
+        // console.log(isAuthenticated);
     };
 
     const updateJournals = (value: JournalObject[]) => {
