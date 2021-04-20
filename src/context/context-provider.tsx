@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from "react-router-dom";
 import AppContext from './context';
 import App from '../App';
 
@@ -177,11 +178,14 @@ export default function AppProvider () {
     const [ records, setRecords ] = useState<JournalEntryObject[]>(journalRecords);
     const [ record, setRecord ] = useState<JournalEntryObject>(journalRecord);
     let API_BASE_URL = "http://rh-lb-493719566.us-east-1.elb.amazonaws.com";
+    const history = useHistory();
 
     const updateToken = (value: string) => {
+        console.log(isAuthenticated, value);
         setToken(value.slice(6));
         setIsAuthenticated(true);
         localStorage.setItem('token', value.slice(6));
+        console.log(isAuthenticated);
     };
 
     const updateJournals = (value: JournalObject[]) => {
@@ -204,8 +208,14 @@ export default function AppProvider () {
         // localStorage.setItem('journals', value);
     };
 
+    const logout = () => {
+        setIsAuthenticated(false);
+        localStorage.removeItem('token');
+        // localStorage.setItem('journals', value);
+    };
+
     return (
-        <AppContext.Provider value={{journalEntryItems, journals, updateToken, isAuthenticated, token, updateJournals, records, updateRecords, record, updateRecord, journal, updateJournal, API_BASE_URL}}>
+        <AppContext.Provider value={{journalEntryItems, journals, updateToken, isAuthenticated, token, updateJournals, records, updateRecords, record, updateRecord, journal, updateJournal, API_BASE_URL, logout}}>
             <App />
         </AppContext.Provider>
     );
