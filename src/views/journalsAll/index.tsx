@@ -84,6 +84,8 @@ function JournalsAll () {
     let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     const context = useContext(AppContext);
     const [journals, setJournals] = useState<[JournalObject] | undefined>();
+    const [isEditing, setIsEditing] = useState<string | undefined>();
+    const [journalName, setJournalName] = useState<string | undefined>();
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -93,6 +95,15 @@ function JournalsAll () {
     useEffect(() => {
         getJournals();
     }, [context.journals])
+    
+
+    const updateJournalName = async () => {
+        await axios.put(
+            `${context.API_BASE_URL}/api/v1/journal/${isEditing}`, 
+            {"journal_name": journalName}, 
+            config
+        )
+    };
 
     const handleJournalClick = (id: string) => {
         history.push(`/journals/${id}`)
@@ -123,9 +134,21 @@ function JournalsAll () {
     };
 
     const handleJournalEdit = async (id: string, name: string) => {
-        // const currentInnerHtml = document.getElementById("journalName")?.innerHTML;
-        // let html = `<input type={"text"} placeholder={"${name}"}/><button>Save</button><button>Cancel</button>`;
-        // document.getElementById("journalName").innerHTML : = html;
+        setJournalName(name);
+        setIsEditing(id);
+    };
+
+    // const handleNameUpdate = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     setJournalName(e.currentTarget.value);
+    // };
+
+    const handleJournalEditSubmit = async () => {
+        if(journalName !== ''){
+            updateJournalName();
+            setIsEditing(undefined);
+            getJournals();
+        }
+  
     };
 
     const postJournal = async (journal: any) => {
@@ -154,7 +177,7 @@ function JournalsAll () {
                     </JournalTitleText>
                     <AddIcon size={30} onClick={handleNewJournalClick}/>
                 </JournalTitleGroup>
-                <Searchbar />
+                {/* <Searchbar /> */}
             </JournalHeader>
             <Table>
                 <thead>
@@ -173,7 +196,22 @@ function JournalsAll () {
                         journals?.map(item => {
                             return (
                                 <TableRow key={item.journal_id} >
-                                    <TableItem onClick={() => handleJournalClick(item.journal_id)}>{item.journal_name}</TableItem>
+                                    {
+                                        isEditing === item.journal_id ?
+                                        <div>
+                                            <TableItem>
+                                                <input value={journalName} onChange={(e) => setJournalName(e.currentTarget.value)}/>
+                                            </TableItem>
+                                            <button onClick={() => setIsEditing(undefined)}>Cancel</button>
+                                            <button onClick={handleJournalEditSubmit}>Done</button>
+                                        </div>
+                                        
+                                        :
+                                        <TableItem onClick={() => handleJournalClick(item.journal_id)}>
+                                            {item.journal_name}
+                                        </TableItem> 
+                                    }
+                                    
                                     <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
                                     <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
                                     <TableItem onClick={() => handleJournalEdit(item.journal_id, item.journal_name)}>✎</TableItem>
