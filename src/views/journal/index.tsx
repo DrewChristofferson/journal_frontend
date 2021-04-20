@@ -131,7 +131,7 @@ function Journal () {
         await axios.get(`${context.API_BASE_URL}/api/v1/record/journal/` + jid, config)
         .then((response) => {
             setRecords(response.data)
-            context.updateRecords(response.data);
+            // context.updateRecords(response.data);
         })
         .catch((e) => e)
     }
@@ -166,7 +166,7 @@ function Journal () {
                     </JournalTitleText>
                     <AddIcon size={30} onClick={handleNewEntryClick}/>
                 </JournalTitleGroup>
-                <Searchbar placeholder="Search" />
+                {/* <Searchbar placeholder="Search" /> */}
             </JournalHeader>
             <Table>
                 <thead>

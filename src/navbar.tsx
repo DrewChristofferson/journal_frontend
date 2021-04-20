@@ -66,7 +66,7 @@ function Sidebar () {
     return(
         <SidebarContainer>
             <SidebarHeader>
-                HackerJournal
+                DevJournal
             </SidebarHeader>
             <SidebarLinks>
                 {
