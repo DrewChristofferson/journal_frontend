@@ -186,8 +186,8 @@ function Journal () {
                                 return (
                                     <TableRow key={item.record_id}>
                                         <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{item.record_title}</TableItem>
-                                        <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
-                                        <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
+                                        <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{new Date(item.createdAt).toLocaleString()}</TableItem>
+                                        <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{new Date(item.updatedAt).toLocaleString()}</TableItem>
                                         <TableItem onClick={() => handleRecordDelete(item.record_id)}>❌</TableItem>
                                     </TableRow>
                                 )
