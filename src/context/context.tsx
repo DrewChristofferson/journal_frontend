@@ -24,6 +24,20 @@ interface JournalObject {
     user_id: string;
 };
 
+interface UserData {
+    accountNonExpired: boolean;
+    accountNonLocked: boolean;
+    authorities: [];
+    credentialsNonExpired: boolean;
+    email: string;
+    enabled: boolean;
+    name: string;
+    password: string;
+    role: string;
+    userid: string;
+    username: string;
+};
+
 const journalData: JournalObject[] = [];
 
 
@@ -46,14 +60,30 @@ const journal: JournalObject = {
     user_id: ""
 };
 
+const user: UserData = {
+    accountNonExpired: false,
+    accountNonLocked: false,
+    authorities: [],
+    credentialsNonExpired: false,
+    email: '',
+    enabled: false,
+    name: '',
+    password: '',
+    role: '',
+    userid: '',
+    username: ''
+};
+
 const updateToken = (value: string) => {};
 
 const updateJournals = (value: JournalObject[]) => {};
 const updateJournal = (value: JournalObject) => {};
 const updateRecords = (value: JournalEntryObject[]) => {};
 const updateRecord = (value: JournalEntryObject) => {};
+const updateUserData = (value: UserData) => {};
 const logout = () => {};
 let token = "";
+let userData: UserData = user;
 let API_BASE_URL = "http://rh-lb-493719566.us-east-1.elb.amazonaws.com";
 
 let isAuthenticated = false;
@@ -72,7 +102,9 @@ const AppContext = React.createContext({
     journal: journal,
     updateJournal,
     API_BASE_URL,
-    logout
+    logout,
+    userData,
+    updateUserData
 
 });
 
