@@ -84,7 +84,7 @@ export default function Login() {
     return (
         <Container>
             <PromoContainer>
-                <h1>Hacker Journal</h1>
+                <h1>DevJournal</h1>
                 <h4>"This journal app for developers will make all your wildest dreams come true."</h4>
                 <h5>- John Turner (Super smart developer)</h5>
             </PromoContainer>
