@@ -61,9 +61,9 @@ export default function Login() {
             }
           }).then(
             function(response) {
-                if(response.status === 200){
+                if(response.status === 200){    
+                    context.updateToken(response.headers.authorization);
                     history.push("/journals");
-                    context.updateToken(response.headers.authorization)
                 } else if (response.status === 403){
                     console.log("invalid username or password");
                 } else {
@@ -77,7 +77,6 @@ export default function Login() {
         );
         actions.setSubmitting(false);
     }
-    debugger; 
 
     return (
         <Container>
