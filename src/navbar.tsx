@@ -56,7 +56,7 @@ const NavText = styled.div`
 
 const links: any[][] = [
     ["My Journals", "/journals", IoIosJournal],
-    ["Create New Entry", "/newentry", FaPenAlt],
+    ["Create New Entry", "/createnewentry", FaPenAlt],
     ["Settings", "/settings", AiFillSetting]
 ]
 

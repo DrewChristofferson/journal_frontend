@@ -114,11 +114,14 @@ export default function AppProvider () {
     }
 
     const updateToken = (value: string) => {
-        console.log(isAuthenticated, value);
+        // console.log(isAuthenticated, value);
         setToken(value.slice(6));
         setIsAuthenticated(true);
         localStorage.setItem('token', value.slice(6));
-        console.log(isAuthenticated);
+
+        // console.log(isAuthenticated);
+
+        // console.log(isAuthenticated);
         getUserData(value.slice(6));
     };
 
@@ -131,7 +134,7 @@ export default function AppProvider () {
             }
         )
         .then((response) => {
-            console.log(response.data)
+            // console.log(response.data)
             setUserData(response.data);
         })
         .catch((e) => e)
@@ -140,6 +143,7 @@ export default function AppProvider () {
     const updateUserData = (newUser: UserData) => {
         setUserData(newUser);
         // localStorage.setItem('journals', value);
+
     };
 
     const updateJournals = (value: JournalObject[]) => {

@@ -4,12 +4,11 @@ import Editor from "@monaco-editor/react";
 import { useHistory, useParams } from 'react-router-dom';
 import AppContext from '../../context/context';
 import axios from 'axios';
+import { Select } from '../../Components/Dropdown/dropdown';
 
 const NewEntryTitleText = styled.div`
     font-size: 42px;
-    padding-bottom: 25px; 
-    border-bottom-color: black; 
-    border-bottom-width: 4px; 
+    padding-bottom: 10px; 
 `
 
 const NewEntryForm = styled.form`
@@ -73,15 +72,16 @@ const Cancel = styled.button`
 
 `;
 
-function NewEntry () {
+export default function CreateNewEntry () {
     let history = useHistory();
     const [theme, setTheme] = useState("light");
     const [language, setLanguage] = useState("markdown");
     const [isEditorReady, setIsEditorReady] = useState(false);
     const [entryTitle, setEntryTitle] = useState<string | undefined>();
     const [entryContent, setEntryContent] = useState<string | undefined>();
+    const [showError, setShowError] = useState<Boolean>(false);
     const context = useContext(AppContext);
-    const { jid } = useParams<{ jid: string }>();
+    const [ jid, setJID ] = useState<string | undefined>();
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -96,13 +96,9 @@ function NewEntry () {
             record_title: entryTitle,
             content: entryContent
         };
-        if(!entryTitle || !entryContent){
-            alert("please enter a title and entry content")
-        } else {
-            postEntry(newEntry).then(res => {
-                history.push(`/journals/${jid}`)
-            });
-        }
+        postEntry(newEntry).then(res => {
+            history.push(`/journals/${jid}`)
+        });
     };
 
     function handleEditorChange(value: string | undefined, event: React.FormEvent<HTMLInputElement>) {
@@ -114,6 +110,25 @@ function NewEntry () {
         await axios.post(`${context.API_BASE_URL}/api/v1/record`, entry, config)
     };
 
+    //create a dropdown of the journals
+    let optionItems = context.journals.map((item) =>
+        <option key={item.journal_id} value={item.journal_id}>{item.journal_name}</option>
+    );
+
+    function handleSelect(event: React.ChangeEvent<HTMLSelectElement>){
+        let value = event.target.value; 
+        if(value.length < 1){
+            setShowError(true); 
+        }
+        else {
+            setJID(value);
+            setShowError(false); 
+        }
+        console.log(value)
+        console.log(Number(value))
+        console.log(showError)
+
+    }
 
     return(
         <div>
@@ -121,9 +136,24 @@ function NewEntry () {
                 Create a New Entry
             </NewEntryTitleText>
             <NewEntryForm>
+                <Select onChange={handleSelect}>
+                    <option value="" hidden>Select Journal</option>
+                    {optionItems}  
+                </Select>
+                    {
+                        showError ?
+                        <p style={{color: 'red'}}>Please Select a Journal</p>
+                        :
+                        <></>
+                    } 
 
-                <Input type="textarea" id="title" placeholder="Title" value={entryTitle} onChange={(e: React.FormEvent<HTMLInputElement>) => setEntryTitle(e.currentTarget.value)}/>
-
+                <Input 
+                    type="textarea" 
+                    id="title" 
+                    placeholder="Title" 
+                    value={entryTitle} 
+                    onChange={(e: React.FormEvent<HTMLInputElement>) => setEntryTitle(e.currentTarget.value)}
+                />
                  
                 <Editor
                     height="50vh"
@@ -134,7 +164,7 @@ function NewEntry () {
                     loading={"Loading..."}
                     onChange={handleEditorChange}
                 />
-                <Cancel onClick={() => history.push("/journals")}>
+                <Cancel onClick={() => history.push("/createnewentry")}>
                     Cancel
                 </Cancel>
                 <Submit onClick={handleSubmit}>
@@ -145,4 +175,4 @@ function NewEntry () {
     )
 }
 
-export default NewEntry;
+
