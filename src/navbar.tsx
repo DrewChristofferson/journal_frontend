@@ -83,7 +83,7 @@ function Sidebar () {
                     DevJournal
                 </SidebarHeader>
                 <SidebarSubtitle>
-                    Hi, {context.userData.name} 👋
+                    Hi, {localStorage.getItem('name')} 👋
                 </SidebarSubtitle>
             </Header>
             <SidebarLinks>
