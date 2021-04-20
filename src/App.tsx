@@ -10,6 +10,7 @@ import NewEntry from './views/newentry/index'
 import JournalEntry from './views/entry/index'
 import Login from './views/login/index'
 import SignUp from './views/signup/index'
+import CreateNewEntry from './views/createnewentry/index'
 import Settings from './views/settings/index'
 
 const AppContainer = styled.div`
@@ -73,6 +74,9 @@ function App() {
                 </Route>
                 <Route path="/newentry">
                   <NewEntry />          
+                </Route>
+                <Route path="/createnewentry">
+                  <CreateNewEntry />          
                 </Route>
                 <Route path="/settings">
                   <Settings />          
