@@ -10,6 +10,8 @@ import EntryCard from '../../Components/EntryCard/EntryCard';
 import InputGroup from '../../Components/InputGroup/InputGroup';
 import LoginInput from '../../Components/Input/Input';
 import LoginButton from '../../Components/LoginButton/LoginButton';
+import { IoMdBookmarks } from 'react-icons/io';
+
 
 
 const Container = styled.div`
@@ -36,6 +38,36 @@ const PromoContainer = styled.div`
     align-items: center;
     background-color: black;
     color: white;
+    padding-bottom: 10%;
+`
+
+const Title = styled.h1`
+    font-size: 50px;
+`
+const QuoteRight = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    width: 90%;
+    font-size: 68px;
+    font-weight: 800;
+`
+const QuoteLeft = styled.div`
+    display: flex;
+    justify-content: flex-start;
+    width: 90%;
+    font-size: 68px;
+    font-weight: 800;
+`
+const QuoteContent = styled.div`
+    width: 75%;
+    font-size: 24px;
+    font-weidht: 400;
+    font-style: italic; 
+`
+const QuoteAuthorContent = styled.div`
+    width: 50%;
+    font-size: 20px;
+    font-weidht: 500;
 `
 
 interface MyFormValues {
@@ -111,9 +143,12 @@ export default function Login() {
     return (
         <Container>
             <PromoContainer>
-                <h1>DevJournal</h1>
-                <h4>"This journal app for developers will make all your wildest dreams come true."</h4>
-                <h5>- John Turner (Super smart developer)</h5>
+                <IoMdBookmarks size="100"/>
+                <Title>DevJournal</Title>
+                <QuoteLeft>&#8220;</QuoteLeft>
+                <QuoteContent>This journal app for developers will make all your wildest dreams come true.</QuoteContent>
+                <QuoteRight>&#8221;</QuoteRight>
+                <QuoteAuthorContent>- John Turner, Super Smart Developer</QuoteAuthorContent>
             </PromoContainer>
             <FormContainer>
             <EntryPage>

@@ -75,7 +75,6 @@ const user: UserData = {
 };
 
 const updateToken = (value: string) => {};
-
 const updateJournals = (value: JournalObject[]) => {};
 const updateJournal = (value: JournalObject) => {};
 const updateRecords = (value: JournalEntryObject[]) => {};
