@@ -9,7 +9,7 @@ import { render, fireEvent, waitFor, screen, wait, getByPlaceholderText } from '
 // declare which API requests to mock
 const server = setupServer(
     // capture "GET /greeting" requests
-    rest.get('/api/vi/journal/user', (req, res: any, ctx: any) => {
+    rest.get('/api/v1/journal/user', (req, res: any, ctx: any) => {
       // respond using a mocked JSON body
       return res(ctx.json({ 
             "journal_id": '1234',
@@ -34,8 +34,10 @@ afterAll(() => server.close())
 
 test('renders My Journals', async() => {
   render(<Journals />);
+
   const pageTitle = screen.getByTestId('title');
   expect(pageTitle).toBeInTheDocument();
+
 
   fireEvent.click(screen.getByTestId('bottom-addjournal'))
   
@@ -57,3 +59,4 @@ test('renders My Journals', async() => {
 
 
 });
+
