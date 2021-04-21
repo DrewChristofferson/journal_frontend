@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Field, Form, FormikHelpers } from "formik";
 import axios from 'axios';
@@ -61,7 +61,7 @@ export default function Login() {
             <EntryPage>
                 {/* <PageHeader to="/">Awesome Journal</PageHeader> */}
                 <EntryCard>
-                    <h1>Login</h1>
+                    <h1 data-testid='loginheader'>Login</h1>
                     <Formik 
                         initialValues={initialValues}
                         onSubmit={(values: MyFormValues, actions: FormikHelpers<MyFormValues>) => {
@@ -70,11 +70,11 @@ export default function Login() {
                         <Form>
                             <InputGroup>
                                 <label htmlFor='username'>Username</label>
-                                <Field name='username' type='text' placeholder='JohnT' as={LoginInput} />
+                                <Field name='username' id='username' type='text' placeholder='JohnT' as={LoginInput} />
                             </InputGroup>
                             <InputGroup>
                                 <label htmlFor='password'>Password</label>
-                                <Field name='password' type='password' placeholder='thisgrouprocks' as={LoginInput} />
+                                <Field name='password' id='password' type='password' placeholder='thisgrouprocks' as={LoginInput} />
                             </InputGroup>
                             <LoginButton type='submit' full>Sign In</LoginButton>
                         </Form> 
