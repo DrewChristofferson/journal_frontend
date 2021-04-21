@@ -25,3 +25,15 @@ align-items: center;
 background-color: black;
 color: white;
 `
+
+export const ButtonsContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+`
+
+export const ButtonContainer = styled.div`
+    flex-basis: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+`

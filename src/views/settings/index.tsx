@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import axios from 'axios';
 import AppContext from '../../context/context';
 import Button from '../../Components/Button/Button'
-import Input from '../../Components/Input/Input'
+import Input from '../../Components/Input/LoginInput'
 
 const Container = styled.div`
     display: flex;

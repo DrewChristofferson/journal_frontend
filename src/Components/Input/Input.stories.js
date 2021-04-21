@@ -1,10 +1,10 @@
-import LoginInput from './Input'
+import Input from './Input'
 
 export default {
     title: 'Input',
-    component: LoginInput,
+    component: Input,
 }
 
-export const Large = () => <LoginInput style={{width: '80%'}}/>
-export const Small = () => <LoginInput style={{width: '20%'}} />
-export const Medium = () => <LoginInput style={{width: '50%'}}/>
+export const Large = () => <Input style={{width: '80%'}}/>
+export const Small = () => <Input style={{width: '20%'}} />
+export const Medium = () => <Input style={{width: '50%'}}/>

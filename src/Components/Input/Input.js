@@ -1,26 +1,20 @@
-import React from 'react' 
-import styled from 'styled-components'; 
+import styled from "styled-components";
 
-const StyledInput = styled.input`
-    width: 100%; 
-    outline: none; 
-    padding: 8px 16px; 
+const BasicInput = styled.input`
+    border: 2px solid #dadada;
+    border-radius: 7px;
+    height: 30px;
+    width: 50%;
+    text-indent: 10px;
     margin-bottom: 10px;
-    border: 1px solid #e0e6e8; 
-    border-radius: 4px; 
-    font-size: 1rem; 
-    color: black; 
-    transition: box-shadow 0.2s; 
-    &::placeholder {
-        color: #dedede; 
-    }
     &:focus {
-        box-shadow: 0 0 0 2px rgb(169, 172, 255, 0.5); 
-    }
+        outline: none;
+        border-color: #9ecaed;
+        box-shadow: 0 0 2px #9ecaed;
 `;
 
-export default function LoginInput({ ...props }) {
+export default function Input({ ...props }) {
     return(
-        <StyledInput {...props} />
+        <BasicInput {...props} />
     );
 }
