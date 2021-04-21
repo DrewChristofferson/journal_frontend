@@ -39,7 +39,6 @@ function PrivateRoute({ children, ...rest }: any) {
 
 function App() {
   
-  
   return (
       <Switch>
         <Route path="/login">
