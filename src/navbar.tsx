@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
 import { Link } from "react-router-dom"
 import { IoIosJournal } from 'react-icons/io';
@@ -66,15 +66,25 @@ const NavText = styled.div`
 //     sel: 20px;
 // `
 
+//if context.journals.length < 1, disable the ability to create a new entry
+
 const links: any[][] = [
     ["My Journals", "/journals", < IoIosJournal size={22} />],
     ["Create New Entry", "/createnewentry", < FaPenAlt size={22} />],
     ["Settings", "/settings", < AiFillSetting size={22} />]
 ]
 
+const links2: any[][] = [
+    ["My Journals", "/journals", < IoIosJournal size={22} />],
+    ["Settings", "/settings", < AiFillSetting size={22} />]
+]
+
+
 
 function Sidebar () {
     const context = useContext(AppContext);
+    const [journalExists, setJournalExists] = useState<Boolean>(true);
+
     return(
         <SidebarContainer>
             <Header>
@@ -88,17 +98,29 @@ function Sidebar () {
             </Header>
             <SidebarLinks>
                 {
+                    journalExists ?
                     links.map(link => {
-                       return (
-                           <NavLink key={link[0]} to={link[1]}>
+                        return (
+                            <NavLink key={link[0]} to={link[1]}>
                                 {link[2]}                                
                                 <NavText>
                                     {link[0]}
                                 </NavText>
                                 
-                           </NavLink>
-                       )
-                       
+                            </NavLink>
+                        )
+                    })
+                    :
+                    links2.map(link => {
+                        return (
+                            <NavLink key={link[0]} to={link[1]}>
+                                {link[2]}                                
+                                <NavText>
+                                    {link[0]}
+                                </NavText>
+                                
+                            </NavLink>
+                        )
                     })
                 }
                 <NavLink key="Log Out" to="/login" onClick={() => context.logout()}>

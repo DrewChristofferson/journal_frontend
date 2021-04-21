@@ -1,13 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Searchbar from '../../Components/SearchBar/SearchBar';
-import { GrAddCircle } from 'react-icons/gr';
+import { GrAddCircle, GrEdit } from 'react-icons/gr';
 import { useHistory, useParams, Link, useRouteMatch } from "react-router-dom";
 // import { contextType } from 'react-commonmark';
+import DeleteModal from '../../Components/Modals/DeleteModal'
 import AppContext from '../../context/context';
 import axios from 'axios';
+import Input from '../../Components/Input/LoginInput'
+import Button from '../../Components/Button/Button'
+import { AddIcon, EditIcon } from '../../Components/Icons/Icons'
 // import CircularProgress from '@material-ui/core/CircularProgress';
-
 
 
 const JournalContainer = styled.div`
@@ -32,12 +35,6 @@ const JournalTitleGroup = styled.div`
 `
 const JournalTitleText = styled.div`
     font-size: 42px;
-`
-
-const AddIcon = styled(GrAddCircle)`
-    padding-bottom: 15px;
-    padding-left: 25px;
-    cursor: pointer;
 `
 
 const Table = styled.table`
@@ -121,6 +118,11 @@ function Journal () {
     const context = useContext(AppContext);
     const [records, setRecords] = useState<[JournalEntryObject] | undefined>();
     const [journal, setJournal] = useState<JournalObject>();
+    const [record, setRecord] = useState<JournalEntryObject>();
+    const [isEditing, setIsEditing] = useState<string | undefined>();
+    const [isDeletePrompt, setIsDeletePrompt] = useState<string | undefined>();
+    const [journalName, setJournalName] = useState<string | undefined>();
+    const [recordName, setRecordName] = useState<string | undefined>();
     // const [isLoading, setIsLoading] = useState<boolean>(true);
     const config = {
         headers: {
@@ -164,14 +166,40 @@ function Journal () {
         history.push(`/journals/${jid}/newentry`);
     }
 
-    const handleRecordDelete = async (id: string) => {
-        if (window.confirm("Are you sure you want to delete this entry? This cannot be undone.")) { //prompt the user and confirm they want to delete the journal entry
-            //if yes, delete the entry
-            await axios.delete(`${context.API_BASE_URL}/api/v1/record/${id}`, config)
-            .then((res) => getRecords());
+    /*** Editing a journal entry name ***/
+    const handleRecordEdit = async (id: string, name: string) => {
+        setRecordName(name);
+        setIsEditing(id);
+    };
+    const handleRecordClick = (id: string) => {
+        history.push(`/journals/${id}`)
+        let entry = context.journalEntryItems.filter(r => r.record_id === id)[0];
+        context.updateRecord(entry);
+    }
+    const updateRecordName = async () => {
+        await axios.put(
+            `${context.API_BASE_URL}/api/v1/record/${isEditing}`, 
+            {"record_title": recordName}, 
+            config
+        )
+    };
+    const handleRecordEditSubmit = async () => {
+        if(recordName !== ''){
+            updateRecordName();
+            setIsEditing(undefined);
+            getRecords();
+            getRecords();
         }
     };
+    /*** END ***/
 
+    /*** Delete a journal entry ***/
+    const handleRecordDelete = async (id: string) => {
+            await axios.delete(`${context.API_BASE_URL}/api/v1/record/${id}`, config)
+            .then((res) => getRecords());
+    };
+    /*** END ***/
+    
     // if(isLoading){
     //     return(
     //         <LoadingContainer>
@@ -214,10 +242,43 @@ function Journal () {
                             records?.map(item => {
                                     return (
                                         <TableRow key={item.record_id}>
-                                            <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{item.record_title}</TableItem>
+                                            {
+                                                isEditing === item.record_id ?
+                                                <div>
+                                                    <TableItem>
+                                                        <Input value={recordName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRecordName(e.target.value)}/>
+                                                    </TableItem>
+                                                    <Button variant="secondary" onClick={() => setIsEditing(undefined)}>Cancel</Button>
+                                                    <Button onClick={handleRecordEditSubmit}>Done</Button>
+                                                </div>
+                                                
+                                                :
+                                                <TableItem onClick={() => handleRecordClick(item.record_id)}>
+                                                    {item.record_title}
+                                                </TableItem> 
+                                            }
                                             <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{new Date(item.createdAt).toLocaleString()}</TableItem>
                                             <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>{new Date(item.updatedAt).toLocaleString()}</TableItem>
-                                            <TableItem onClick={() => handleRecordDelete(item.record_id)}>❌</TableItem>
+                                            {
+                                                isEditing === item.record_id ?
+                                                <TableItem onClick={() => setIsEditing(undefined)}>
+                                                    <EditIcon size='30'/>
+                                                </TableItem>
+                                                :
+                                                <TableItem onClick={() => handleRecordEdit(item.record_id, item.record_title)}>
+                                                    <EditIcon size='30' />
+                                                </TableItem>    
+                                            }
+                                            {
+                                                isDeletePrompt === item.record_id ?
+                                                <TableItem onClick={() => setIsDeletePrompt(undefined)}>
+                                                    <DeleteModal handleRecordDelete={handleRecordDelete} id={item.record_id} location='bottom'/>
+                                                </TableItem>
+                                                :
+                                                <TableItem>
+                                                    <DeleteModal handleRecordDelete={handleRecordDelete} id={item.record_id} location='bottom'/>
+                                                </TableItem>
+                                            }
                                         </TableRow>
                                     )
                                 
