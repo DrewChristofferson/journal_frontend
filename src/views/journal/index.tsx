@@ -6,7 +6,7 @@ import { useHistory, useParams, Link, useRouteMatch } from "react-router-dom";
 // import { contextType } from 'react-commonmark';
 import AppContext from '../../context/context';
 import axios from 'axios';
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 
@@ -121,7 +121,7 @@ function Journal () {
     const context = useContext(AppContext);
     const [records, setRecords] = useState<[JournalEntryObject] | undefined>();
     const [journal, setJournal] = useState<JournalObject>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -151,7 +151,7 @@ function Journal () {
         await axios.get(`${context.API_BASE_URL}/api/v1/record/journal/` + jid, config)
         .then((response) => {
             setRecords(response.data)
-            setIsLoading(false)
+            // setIsLoading(false)
         })
         .catch((e) => e)
     }
@@ -172,13 +172,13 @@ function Journal () {
         }
     };
 
-    if(isLoading){
-        return(
-            <LoadingContainer>
-                <CircularProgress/>
-            </LoadingContainer>
-        )
-    } else {
+    // if(isLoading){
+    //     return(
+    //         <LoadingContainer>
+    //             <CircularProgress/>
+    //         </LoadingContainer>
+    //     )
+    // } else {
         return(
             <JournalContainer>
                 <BreadcrumbContainer>
@@ -240,7 +240,7 @@ function Journal () {
                 }
             </JournalContainer>
         )
-    }
+    // }
     
 }
 
