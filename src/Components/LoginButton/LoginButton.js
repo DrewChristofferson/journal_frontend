@@ -17,7 +17,10 @@ const LoginButtonStyle = styled.button`
     letter-spacing: 0.02857rem; 
     cursor: pointer; 
     transition: all 0.2s; 
-    &:hover { background-color: #0072ff; }
+    &:hover { background-color: #ffffff;
+                color: #111111;
+                border: 2px solid #111111; 
+            }
 `;
 
 export default function LoginButton({ children, ...props }) {
