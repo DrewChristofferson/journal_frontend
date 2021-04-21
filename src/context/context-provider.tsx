@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useHistory } from "react-router-dom";
+import { useState } from 'react';
 import AppContext from './context';
 import App from '../App';
 import axios from 'axios';
@@ -78,28 +77,8 @@ interface UserData {
     username: string;
 };
 
-interface JournalEntryObjectDB {
-    id: string;
-    journalid: string;
-    name: string;
-    date: string;
-    count: number;
-    owner: string;
-};
-
-interface JournalObjectDB {
-    journal_id: string;
-    user_id: string;
-    journal_name: string;
-    createdAt: number;
-    updatedAt: number;
-};
-
-
-
 /** The context provider for our app */
 export default function AppProvider () {
-    const [ journalEntryItems, setJournalEntryItems ] = useState<JournalEntryObject[]>([]);
     const [ token, setToken ] = useState<string>('invalidtoken');
     const [ isAuthenticated, setIsAuthenticated ] = useState<boolean>(false);
     const [ journals, setJournals ] = useState<JournalObject[]>([]);
@@ -108,22 +87,12 @@ export default function AppProvider () {
     const [ record, setRecord ] = useState<JournalEntryObject>(journalRecord);
     const [ userData, setUserData ] = useState<UserData>(user);
     let API_BASE_URL = "https://api.devjournal.link";
-    const history = useHistory();
-    const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }
-    }
 
     const updateToken = (value: string) => {
-        // console.log(isAuthenticated, value);
         setToken(value.slice(6));
         setIsAuthenticated(true);
         localStorage.setItem('token', value.slice(6));
 
-        // console.log(isAuthenticated);
-
-        // console.log(isAuthenticated);
         getUserData(value.slice(6));
     };
 
@@ -136,9 +105,7 @@ export default function AppProvider () {
             }
         )
         .then((response) => {
-            // console.log(response.data)
             setUserData(response.data);
-            console.log(response.data.userid)
             localStorage.setItem('userid', response.data.userid);
             localStorage.setItem('name', response.data.name);
             localStorage.setItem('email', response.data.email);
@@ -149,28 +116,22 @@ export default function AppProvider () {
 
     const updateUserData = (newUser: UserData) => {
         setUserData(newUser);
-        // localStorage.setItem('journals', value);
-
     };
 
     const updateJournals = (value: JournalObject[]) => {
         setJournals(value);
-        // localStorage.setItem('journals', value);
     };
 
     const updateJournal = (value: JournalObject) => {
         setJournal(value);
-        // localStorage.setItem('journals', value);
     };
 
     const updateRecords = (value: JournalEntryObject[]) => {
         setRecords(value);
-        // localStorage.setItem('journals', value);
     };
 
     const updateRecord = (value: JournalEntryObject) => {
         setRecord(value);
-        // localStorage.setItem('journals', value);
     };
 
     const logout = () => {
@@ -181,11 +142,10 @@ export default function AppProvider () {
         localStorage.removeItem('username');
         localStorage.removeItem('name');
         localStorage.removeItem('email');
-        // localStorage.setItem('journals', value);
     };
 
     return (
-        <AppContext.Provider value={{journalEntryItems, journals, updateToken, isAuthenticated, token, updateJournals, records, updateRecords, record, updateRecord, journal, updateJournal, API_BASE_URL, logout, userData, updateUserData}}>
+        <AppContext.Provider value={{ journals, updateToken, isAuthenticated, token, updateJournals, records, updateRecords, record, updateRecord, journal, updateJournal, API_BASE_URL, logout, userData, updateUserData}}>
             <App />
         </AppContext.Provider>
     );

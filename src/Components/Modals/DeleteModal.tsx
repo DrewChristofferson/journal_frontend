@@ -1,9 +1,7 @@
-import * as bs from 'react-bootstrap'
 import Button from '../../Components/Button/Button';
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import AppContext from '../../context/context';
 import { DeleteIcon } from '../../Components/Icons/Icons'
 
 
@@ -23,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         justifyContent: 'center',
         padding: '30px 0'
+    },
+    verticallyAlign: {
+      display: 'flex',
+      alignItems: 'center'
     }
   }));
 
@@ -34,14 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DeleteModal: React.FC<Props> = (props) => {
     const classes = useStyles();
-    const context = useContext(AppContext);
     const [open, setOpen] = useState(false);
-    const [name, setName] = useState<string | undefined>();
-    const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }
-    }
 
     const handleOpen = () => {
         setOpen(true);
@@ -49,7 +44,6 @@ const DeleteModal: React.FC<Props> = (props) => {
 
     const handleClose = () => {
         setOpen(false);
-        setName(undefined);
     };
 
     const handleDeleteJournalClick = () => {
@@ -71,7 +65,7 @@ const DeleteModal: React.FC<Props> = (props) => {
 
     return (
         <>
-        <DeleteIcon size="30" onClick={handleOpen} data-testid={`${props.location}-addjournal`}/>
+        <DeleteIcon size={20} style={{padding: 0}} onClick={handleOpen} data-testid={`${props.location}-addjournal`}/>
             <Modal
                 open={open}
                 onClose={handleClose}
