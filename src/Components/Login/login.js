@@ -7,6 +7,8 @@ export const EntryPage = styled.div`
     flex-direction: row; 
     min-height: 100vh;
     background-color: #ffffff; 
+    justify-content: center;
+    width: 80%;
 `;
 
 export const PageHeader = styled(Link)`

@@ -4,13 +4,14 @@ import { Redirect, useHistory } from 'react-router-dom';
 import { Formik, Field, Form, FormikHelpers } from "formik";
 import axios from 'axios';
 import AppContext from '../../context/context';
-import { Link } from 'react-router-dom'; 
+import { BrowserRouter as Router, Link } from 'react-router-dom'; 
 import { EntryPage, PageHeader } from '../../Components/Login/login'; 
 import EntryCard from '../../Components/EntryCard/EntryCard';
 import InputGroup from '../../Components/InputGroup/InputGroup';
 import LoginInput from '../../Components/Input/Input';
 import LoginButton from '../../Components/LoginButton/LoginButton';
 import { Container, FormContainer, PromoContainer } from '../../Components/Container/container'
+import Promo from './loginpromo'
 
 
 interface MyFormValues {
@@ -54,12 +55,9 @@ export default function Login() {
     }
 
     return (
+        <Router>
         <Container>
-            <PromoContainer>
-                <h1>DevJournal</h1>
-                <h4>"This journal app for developers will make all your wildest dreams come true."</h4>
-                <h5>- John Turner (Super smart developer)</h5>
-            </PromoContainer>
+            <Promo />
             <FormContainer>
             <EntryPage>
                 {/* <PageHeader to="/">Awesome Journal</PageHeader> */}
@@ -96,5 +94,6 @@ export default function Login() {
             </EntryPage>
           </FormContainer>
         </Container>
+        </Router>
     );
 }

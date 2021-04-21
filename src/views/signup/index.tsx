@@ -11,6 +11,8 @@ import InputGroup from '../../Components/InputGroup/InputGroup';
 import LoginInput from '../../Components/Input/Input';
 import LoginButton from '../../Components/LoginButton/LoginButton';
 import { Container, FormContainer, PromoContainer } from '../../Components/Container/container'
+import Promo from '../login/loginpromo'
+
 
 interface MyFormValues {
     name: string; 
@@ -83,11 +85,7 @@ export default function Login() {
 
     return (
         <Container>
-            <PromoContainer>
-                <h1>DevJournal</h1>
-                <h4>"This journal app for developers will make all your wildest dreams come true."</h4>
-                <h5>- John Turner (Super smart developer)</h5>
-            </PromoContainer>
+            <Promo/>
             <FormContainer>
             <EntryPage>
                 {/* <PageHeader to="/">Awesome Journal</PageHeader> */}

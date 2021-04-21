@@ -5,6 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import AppContext from '../../context/context';
 import axios from 'axios';
 import { Select } from '../../Components/Dropdown/dropdown';
+import Button from '../../Components/Button/Button';
 
 const NewEntryTitleText = styled.div`
     font-size: 42px;
@@ -72,11 +73,20 @@ const Cancel = styled.button`
 
 `;
 
+interface JournalObject {
+    journal_id: string;
+    journal_name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    user_id: string;
+}
+
 export default function CreateNewEntry () {
     let history = useHistory();
     const [theme, setTheme] = useState("light");
     const [language, setLanguage] = useState("markdown");
     const [isEditorReady, setIsEditorReady] = useState(false);
+    const [journals, setJournals] = useState<[JournalObject] | undefined>();
     const [entryTitle, setEntryTitle] = useState<string | undefined>();
     const [entryContent, setEntryContent] = useState<string | undefined>();
     const [showError, setShowError] = useState<Boolean>(false);
@@ -87,6 +97,10 @@ export default function CreateNewEntry () {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
     };
+
+    useEffect(() => {
+        getJournals();
+    }, [])
 
 
     const handleSubmit = (e: MouseEvent) => {
@@ -111,8 +125,17 @@ export default function CreateNewEntry () {
         await axios.post(`${context.API_BASE_URL}/api/v1/record`, entry, config)
     };
 
+    const getJournals = async() => {
+        await axios.get(`${context.API_BASE_URL}/api/v1/journal/user`, config)
+        .then((response) => {
+            setJournals(response.data);
+            context.updateJournals(response.data);
+        })
+        .catch((e) => e)
+    };
+
     //create a dropdown of the journals
-    let optionItems = context.journals.map((item) =>
+    let optionItems = journals?.map((item) =>
         <option key={item.journal_id} value={item.journal_id}>{item.journal_name}</option>
     );
 
@@ -139,11 +162,13 @@ export default function CreateNewEntry () {
             <NewEntryForm>
                 <Select onChange={handleSelect}>
                     <option value="" hidden>Select Journal</option>
-                    {optionItems}  
+                    {optionItems}
+            
+                      
                 </Select>
                     {
                         showError ?
-                        <p style={{color: 'red'}}>Please Select a Journal</p>
+                        <p style={{color: 'red'}}>Please Select a Journal. If no journals are found, you may need to create a new one.</p>
                         :
                         <></>
                     } 
