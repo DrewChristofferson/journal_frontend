@@ -1,4 +1,3 @@
-import * as bs from 'react-bootstrap'
 import Button from '../../Components/Button/Button';
 import Input from '../Input/LoginInput';
 import React, { useState, useContext } from 'react'
@@ -60,7 +59,7 @@ const CreateModal: React.FC<Props> = (props) => {
 
     const handleNewJournalClick = () => {
         // let name: string = "";
-        let names: string[] = context.journals.flatMap(j => j.journal_name);
+        // let names: string[] = context.journals.flatMap(j => j.journal_name);
         // while (name === "" || names.includes(name)) {
         //     name = String(window.prompt("Journal name must be unique and nonempty!"));
         // }
