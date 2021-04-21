@@ -48,7 +48,6 @@ function App() {
   
   
   return (
-    <Router>
       <Switch>
         <Route path="/login">
           <Login />          
@@ -81,7 +80,6 @@ function App() {
                 <Route path="/settings">
                   <Settings />          
                 </Route>
-                
                 <Route path="/">
                   <Redirect to="/journals" />
                 </Route>
@@ -89,9 +87,6 @@ function App() {
             </AppContainer>
         </PrivateRoute>
       </Switch>
-      
-        
-     </Router>
   );
 }
 

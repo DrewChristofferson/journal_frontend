@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Link } from 'react-router-dom';
 import { EntryPage, PageHeader } from '../../Components/Login/login'; 
 import EntryCard from '../../Components/EntryCard/EntryCard';
 import InputGroup from '../../Components/InputGroup/InputGroup';
-import LoginInput from '../../Components/Input/Input';
+import LoginInput from '../../Components/Input/LoginInput';
 import LoginButton from '../../Components/LoginButton/LoginButton';
 import { Container, FormContainer, PromoContainer } from '../../Components/Container/container'
 import Promo from './loginpromo'
@@ -88,7 +88,7 @@ export default function Login() {
                     }   
                     <span>
                         Don't have an account?
-                        <Link to="/signup">Sign Up</Link>
+                        <Link to="/signup" onClick={() => history.push("/signup")}>Sign Up</Link>
                     </span>
                 </EntryCard>
             </EntryPage>

@@ -1,13 +1,15 @@
 import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components'
 import Searchbar from '../../Components/searchbar'
-import { GrAddCircle } from 'react-icons/gr';
+import { GrEdit } from 'react-icons/gr';
 import { BrowserRouter as Router,useHistory, Link } from "react-router-dom";
 import axios from 'axios';
 import AppContext from '../../context/context';
 import CreateModal from '../../Components/Modals/CreateModal'
+import DeleteModal from '../../Components/Modals/DeleteModal'
 import Button from '../../Components/Button/Button'
-import Input from '../../Components/Input/Input'
+import Input from '../../Components/Input/LoginInput'
+import { EditIcon } from '../../Components/Icons/Icons'
 // import CircularProgress from '@material-ui/core/CircularProgress';
 
 const JournalContainer = styled.div`
@@ -32,11 +34,7 @@ const JournalTitleGroup = styled.div`
 const JournalTitleText = styled.div`
     font-size: 42px;
 `
-const AddIcon = styled(GrAddCircle)`
-    padding-bottom: 15px;
-    padding-left: 25px;
-    cursor: pointer;
-`
+
 const Table = styled.table`
     color: black;
     width: 100%;
@@ -97,6 +95,7 @@ function JournalsAll () {
     const context = useContext(AppContext);
     const [journals, setJournals] = useState<[JournalObject] | undefined>();
     const [isEditing, setIsEditing] = useState<string | undefined>();
+    const [isDeletePrompt, setIsDeletePrompt] = useState<string | undefined>();
     // const [isLoading, setIsLoading] = useState<boolean>(true);
     const [journalName, setJournalName] = useState<string | undefined>();
     const config = {
@@ -124,11 +123,9 @@ function JournalsAll () {
         context.updateJournal(journal);
     }
 
-    const handleJournalDelete = async (id: string) => { 
-        if (window.confirm("Are you sure you want to delete this journal? This cannot be undone.")) { //confirm the deletion of the journal
-            //if yes, delete the journal
+    const handleRecordDelete = async (id: string) => { 
             await axios.delete(`${context.API_BASE_URL}/api/v1/journal/${id}`, config)
-        }
+        // }
         getJournals();
     };
 
@@ -226,14 +223,25 @@ function JournalsAll () {
                                         <TableItem onClick={() => handleJournalClick(item.journal_id)}>{new Date(item.updatedAt).toLocaleString()}</TableItem>
                                         {
                                             isEditing === item.journal_id ?
-                                            <TableItem onClick={() => setIsEditing(undefined)}>✎</TableItem>
+                                            <TableItem onClick={() => setIsEditing(undefined)}>
+                                                <EditIcon size='30'/>
+                                            </TableItem>
                                             :
-                                            <TableItem onClick={() => handleJournalEdit(item.journal_id, item.journal_name)}>✎</TableItem>
-    
-    
+                                            <TableItem onClick={() => handleJournalEdit(item.journal_id, item.journal_name)}>
+                                                <EditIcon size='30'/>
+                                            </TableItem>    
                                         }
-                                        <TableItem onClick={() => handleJournalDelete(item.journal_id)}>❌</TableItem>
-                                    </TableRow>
+                                        {
+                                            isDeletePrompt === item.journal_id ?
+                                            <TableItem onClick={() => setIsDeletePrompt(undefined)}>
+                                                <DeleteModal handleRecordDelete={handleRecordDelete} id={item.journal_id} location='bottom'/>
+                                            </TableItem>
+                                            :
+                                            <TableItem>
+                                                <DeleteModal handleRecordDelete={handleRecordDelete} id={item.journal_id} location='bottom'/>
+                                            </TableItem>
+                                        }
+                                        </TableRow>
                                 )
                             })
                         }
