@@ -104,12 +104,12 @@ export default function CreateNewEntry () {
 
     return(
         <div>
-            <NewEntryTitleText>
+            <NewEntryTitleText data-testid='newEntryTitle'>
                 Create a New Entry
             </NewEntryTitleText>
             <NewEntryForm>
                 <Select onChange={handleSelect}> 
-                    <option value="" hidden>Select Journal</option>
+                    <option value="" hidden data-testid='selectjournaldropdown'>Select Journal</option>
                     {optionItems}
                 </Select>
                     {
@@ -124,19 +124,21 @@ export default function CreateNewEntry () {
                     placeholder="Title" 
                     value={entryTitle} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => setEntryTitle(e.currentTarget.value)}
+                    data-testid='entryInput'
                 />
+            
                 <Editor
                     height="50vh"
-                    width="50vw" // By default, it fully fits with its parent
                     theme={'dark'}
                     language={language}
                     value={entryContent}
                     loading={"Loading..."}
                     onChange={handleEditorChange}
+                    data-testid='createEntryInput'
                 />
                 <ButtonsContainer>
-                    <Button onClick={handleCancel} variant='secondary'>Cancel</Button>
-                    <Button onClick={handleSubmit}>Done</Button>
+                    <Button onClick={handleCancel} variant='secondary' data-testid='cancelButton'>Cancel</Button>
+                    <Button onClick={handleSubmit} data-testid='saveButton'>Done</Button>
                 </ButtonsContainer>
             </NewEntryForm>
         </div>
