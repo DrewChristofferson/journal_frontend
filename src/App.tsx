@@ -1,7 +1,5 @@
-import React, { useContext, ReactNode } from 'react';
 import styled from 'styled-components'
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
-import AppContext from './context/context'
+import { Switch, Route, Redirect } from "react-router-dom"
 import './App.css';
 import Sidebar from './navbar'
 import JournalsAll from './views/journalsAll/index'
@@ -18,13 +16,8 @@ const AppContainer = styled.div`
   margin-top: 50px;
   margin-right: 100px;
 `
-interface IProps {
-  children: ReactNode;
-  // any other props that come into the component
-}
 
 function PrivateRoute({ children, ...rest }: any) {
-  const context = useContext(AppContext);
   return (
     <Route
       {...rest}
@@ -45,7 +38,6 @@ function PrivateRoute({ children, ...rest }: any) {
 }
 
 function App() {
-  
   
   return (
       <Switch>

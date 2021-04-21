@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import ReactMarkdown from 'react-markdown';
 import { HtmlRenderer, Parser } from 'commonmark';
-import { useParams, Link, useRouteMatch, useHistory } from "react-router-dom";
+import { useParams, Link, useRouteMatch } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import Button from '../../Components/Button/Button';
 import AppContext from '../../context/context';
@@ -48,13 +47,13 @@ const ButtonsContainer = styled.div`
     display: flex;
     justify-content: flex-end;
 `
-const LoadingContainer = styled.div`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`
+// const LoadingContainer = styled.div`
+//     width: 100%;
+//     height: 100%;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+// `
 
 interface JournalEntryObject {
     record_id: string;
@@ -79,7 +78,6 @@ interface MatchParams {
   };
 
 function JournalEntry () {
-    const [language, setLanguage] = useState("markdown");
     const [entry, setEntry] = useState<JournalEntryObject | undefined>();
     const [journal, setJournal] = useState<JournalObject>();
     const [isEditView, setIsEditView] = useState(false);
@@ -87,7 +85,6 @@ function JournalEntry () {
     const [markdownContent, setMarkdownContent] = useState<string | undefined>();
     // const [isLoading, setIsLoading] = useState<boolean>(true);
     const context = useContext(AppContext); 
-    let history = useHistory(); 
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -196,7 +193,7 @@ function JournalEntry () {
                         <Editor
                             height="50vh" // By default, it fully fits with its parent
                             theme={'dark'}
-                            language={language}
+                            language={"markdown"}
                             value= {markdownContent}
                             loading={"Loading..."}
                             onChange={handleEditorChange}

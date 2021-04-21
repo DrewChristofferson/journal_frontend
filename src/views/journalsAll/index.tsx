@@ -1,7 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components'
-import Searchbar from '../../Components/searchbar'
-import { GrEdit } from 'react-icons/gr';
 import { BrowserRouter as Router,useHistory, Link } from "react-router-dom";
 import axios from 'axios';
 import AppContext from '../../context/context';
@@ -10,11 +8,8 @@ import DeleteModal from '../../Components/Modals/DeleteModal'
 import Button from '../../Components/Button/Button'
 import Input from '../../Components/Input/LoginInput'
 import { EditIcon } from '../../Components/Icons/Icons'
-<<<<<<< Updated upstream
 // import CircularProgress from '@material-ui/core/CircularProgress';
-=======
 import { H1 } from '../../Components/Typography/Typography'
->>>>>>> Stashed changes
 
 const JournalContainer = styled.div`
     display: flex;
@@ -65,19 +60,25 @@ const TableItem = styled.td`
     padding-left: 10px;
 `
 
+const VerticallyAlign = styled.div`
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+`
+
 const EmptyJournalContatiner = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 50px;
 `
-const LoadingContainer = styled.div`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`
+// const LoadingContainer = styled.div`
+//     width: 100%;
+//     height: 100%;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+// `
 
 interface JournalObject {
     journal_id: string;
@@ -114,7 +115,7 @@ function JournalsAll () {
 
     useEffect(() => {
         getJournals();
-    }, [context.journals])
+    }, [])
     
 
     const updateJournalName = async () => {
@@ -142,9 +143,6 @@ function JournalsAll () {
         setIsEditing(id);
     };
 
-    // const handleNameUpdate = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     setJournalName(e.currentTarget.value);
-    // };
 
     const handleJournalEditSubmit = async () => {
         if(journalName !== ''){
@@ -152,10 +150,6 @@ function JournalsAll () {
             setIsEditing(undefined);
             getJournals();
         }
-    };
-
-    const postJournal = async (journal: any) => {
-        await axios.post(`${context.API_BASE_URL}/api/v1/journal`, journal, config)
     };
 
     const getJournals = async() => {
@@ -231,21 +225,27 @@ function JournalsAll () {
                                         {
                                             isEditing === item.journal_id ?
                                             <TableItem onClick={() => setIsEditing(undefined)}>
-                                                <EditIcon size='30'/>
+                                                <EditIcon size={20} style={{padding: 0}}/>
                                             </TableItem>
                                             :
                                             <TableItem onClick={() => handleJournalEdit(item.journal_id, item.journal_name)}>
-                                                <EditIcon size='30'/>
+                                                <VerticallyAlign>
+                                                    <EditIcon size={20} style={{padding: 0}}/>
+                                                </VerticallyAlign>
                                             </TableItem>    
                                         }
                                         {
                                             isDeletePrompt === item.journal_id ?
                                             <TableItem onClick={() => setIsDeletePrompt(undefined)}>
-                                                <DeleteModal handleRecordDelete={handleRecordDelete} id={item.journal_id} location='bottom'/>
+                                                <VerticallyAlign>
+                                                    <DeleteModal handleRecordDelete={handleRecordDelete} id={item.journal_id} location='bottom'/>
+                                                </VerticallyAlign>
                                             </TableItem>
                                             :
                                             <TableItem>
-                                                <DeleteModal handleRecordDelete={handleRecordDelete} id={item.journal_id} location='bottom'/>
+                                                <VerticallyAlign>
+                                                    <DeleteModal handleRecordDelete={handleRecordDelete} id={item.journal_id} location='bottom'/>
+                                                </VerticallyAlign>
                                             </TableItem>
                                         }
                                         </TableRow>

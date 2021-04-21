@@ -1,16 +1,15 @@
 import React, { useState, useContext } from 'react';
-import styled from 'styled-components';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Formik, Field, Form, FormikHelpers } from "formik";
 import axios from 'axios';
 import AppContext from '../../context/context';
 import { BrowserRouter as Router, Link } from 'react-router-dom'; 
-import { EntryPage, PageHeader } from '../../Components/Login/login'; 
+import { EntryPage } from '../../Components/Login/login'; 
 import EntryCard from '../../Components/EntryCard/EntryCard';
 import InputGroup from '../../Components/InputGroup/InputGroup';
 import LoginInput from '../../Components/Input/LoginInput';
 import LoginButton from '../../Components/LoginButton/LoginButton';
-import { Container, FormContainer, PromoContainer } from '../../Components/Container/container'
+import { Container, FormContainer } from '../../Components/Container/container'
 import Promo from './loginpromo'
 
 
@@ -62,7 +61,7 @@ export default function Login() {
             <EntryPage>
                 {/* <PageHeader to="/">Awesome Journal</PageHeader> */}
                 <EntryCard>
-                    <h1>Login</h1>
+                    <h1 data-testid='loginheader'>Login</h1>
                     <Formik 
                         initialValues={initialValues}
                         onSubmit={(values: MyFormValues, actions: FormikHelpers<MyFormValues>) => {
@@ -71,11 +70,11 @@ export default function Login() {
                         <Form>
                             <InputGroup>
                                 <label htmlFor='username'>Username</label>
-                                <Field name='username' type='text' placeholder='JohnT' as={LoginInput} />
+                                <Field name='username' id='username' type='text' placeholder='JohnT' as={LoginInput} />
                             </InputGroup>
                             <InputGroup>
                                 <label htmlFor='password'>Password</label>
-                                <Field name='password' type='password' placeholder='thisgrouprocks' as={LoginInput} />
+                                <Field name='password' id='password' type='password' placeholder='thisgrouprocks' as={LoginInput} />
                             </InputGroup>
                             <LoginButton type='submit' full>Sign In</LoginButton>
                         </Form> 
