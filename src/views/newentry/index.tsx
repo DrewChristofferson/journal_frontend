@@ -65,7 +65,7 @@ function NewEntry () {
 
     return(
         <div>
-            <NewEntryTitleText>
+            <NewEntryTitleText data-testid="title">
                 Create a New Entry
             </NewEntryTitleText>
             <NewEntryForm>
