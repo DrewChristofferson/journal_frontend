@@ -2,9 +2,13 @@ import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components'
 import Searchbar from '../../Components/searchbar'
 import { GrAddCircle } from 'react-icons/gr';
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { BrowserRouter as Router,useHistory, Link } from "react-router-dom";
 import axios from 'axios';
 import AppContext from '../../context/context';
+import CreateModal from '../../Components/Modals/CreateModal'
+import Button from '../../Components/Button/Button'
+import Input from '../../Components/Input/Input'
+// import CircularProgress from '@material-ui/core/CircularProgress';
 
 const JournalContainer = styled.div`
     display: flex;
@@ -59,6 +63,20 @@ const TableItem = styled.td`
     padding-left: 10px;
 `
 
+const EmptyJournalContatiner = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+`
+const LoadingContainer = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+
 interface JournalObject {
     journal_id: string;
     journal_name: string;
@@ -66,11 +84,6 @@ interface JournalObject {
     updatedAt: Date;
     user_id: string;
 }
-
-interface MatchParams {
-    jid: string,
-    eid: string
-  };
 
 const journalColumns: string[] = [
     "Journal Name",
@@ -81,10 +94,10 @@ const journalColumns: string[] = [
 
 function JournalsAll () {
     let history = useHistory();
-    let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     const context = useContext(AppContext);
     const [journals, setJournals] = useState<[JournalObject] | undefined>();
     const [isEditing, setIsEditing] = useState<string | undefined>();
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
     const [journalName, setJournalName] = useState<string | undefined>();
     const config = {
         headers: {
@@ -110,20 +123,6 @@ function JournalsAll () {
         let journal = context.journals.filter(j => j.journal_id === id)[0];
         context.updateJournal(journal);
     }
-
-    const handleNewJournalClick = () => {
-        let name: string = "";
-        let names: string[] = context.journals.flatMap(j => j.journal_name);
-        while (name === "" || names.includes(name)) {
-            name = String(window.prompt("Journal name must be unique and nonempty!"));
-        }
-        let newJournal = {
-            journal_name: name
-        };
-        if (name.length > 0 && name !== 'null') {
-            postJournal(newJournal).then((res) => getJournals())
-        }
-    };
 
     const handleJournalDelete = async (id: string) => { 
         if (window.confirm("Are you sure you want to delete this journal? This cannot be undone.")) { //confirm the deletion of the journal
@@ -160,70 +159,104 @@ function JournalsAll () {
         .then((response) => {
             setJournals(response.data);
             context.updateJournals(response.data);
+            // setIsLoading(false);
         })
         .catch((e) => e)
     };
 
 
-    return(
-        <JournalContainer>
-            <BreadcrumbContainer>
-                <Link to="/journals">My Journals</Link> 
-            </BreadcrumbContainer>
-            <JournalHeader>
-                <JournalTitleGroup>
-                    <JournalTitleText>
-                        My Journals
-                    </JournalTitleText>
-                    <AddIcon size={30} onClick={handleNewJournalClick}/>
-                </JournalTitleGroup>
-                {/* <Searchbar /> */}
-            </JournalHeader>
-            <Table>
-                <thead>
-                    <TableRowHeading>
+    // if (isLoading){
+    //     return(
+    //         <LoadingContainer>
+    //             <CircularProgress/>
+    //         </LoadingContainer>
+    //     )
+    // } else{
+        return(
+            <Router>
+            <JournalContainer>
+                <BreadcrumbContainer>
+                    <Link to="/journals" data-testid="title">My Journals</Link> 
+                </BreadcrumbContainer>
+                <JournalHeader>
+                    <JournalTitleGroup>
+                        <JournalTitleText>
+                            My Journals
+                        </JournalTitleText>
+                        <CreateModal getJournals={getJournals} location='top'/>
+                    </JournalTitleGroup>
+                    {/* <Searchbar /> */}
+                </JournalHeader>
+                <Table>
+                    <thead>
+                        <TableRowHeading>
+                            {
+                                journalColumns.map(heading => {
+                                    return (
+                                        <TableHeader key={heading}>{heading}</TableHeader>
+                                    )
+                                })
+                            }
+                        </TableRowHeading>
+                    </thead>
+                    {
+                        journals && journals[0] ?
+                        <tbody data-testid="journalsTable">
                         {
-                            journalColumns.map(heading => {
+                            journals?.map(item => {
                                 return (
-                                    <TableHeader key={heading}>{heading}</TableHeader>
+                                    <TableRow key={item.journal_id} >
+                                        {
+                                            isEditing === item.journal_id ?
+                                            <div>
+                                                <TableItem>
+                                                    <Input value={journalName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setJournalName(e.target.value)}/>
+                                                </TableItem>
+                                                <Button variant="secondary" onClick={() => setIsEditing(undefined)}>Cancel</Button>
+                                                <Button onClick={handleJournalEditSubmit}>Done</Button>
+                                            </div>
+                                            
+                                            :
+                                            <TableItem onClick={() => handleJournalClick(item.journal_id)}>
+                                                {item.journal_name}
+                                            </TableItem> 
+                                        }
+                                        
+                                        <TableItem onClick={() => handleJournalClick(item.journal_id)}>{new Date(item.createdAt).toLocaleString()}</TableItem>
+                                        <TableItem onClick={() => handleJournalClick(item.journal_id)}>{new Date(item.updatedAt).toLocaleString()}</TableItem>
+                                        {
+                                            isEditing === item.journal_id ?
+                                            <TableItem onClick={() => setIsEditing(undefined)}>✎</TableItem>
+                                            :
+                                            <TableItem onClick={() => handleJournalEdit(item.journal_id, item.journal_name)}>✎</TableItem>
+    
+    
+                                        }
+                                        <TableItem onClick={() => handleJournalDelete(item.journal_id)}>❌</TableItem>
+                                    </TableRow>
                                 )
                             })
                         }
-                    </TableRowHeading>
-                </thead>
-                <tbody>
-                    {
-                        journals?.map(item => {
-                            return (
-                                <TableRow key={item.journal_id} >
-                                    {
-                                        isEditing === item.journal_id ?
-                                        <div>
-                                            <TableItem>
-                                                <input value={journalName} onChange={(e) => setJournalName(e.currentTarget.value)}/>
-                                            </TableItem>
-                                            <button onClick={() => setIsEditing(undefined)}>Cancel</button>
-                                            <button onClick={handleJournalEditSubmit}>Done</button>
-                                        </div>
-                                        
-                                        :
-                                        <TableItem onClick={() => handleJournalClick(item.journal_id)}>
-                                            {item.journal_name}
-                                        </TableItem> 
-                                    }
-                                    
-                                    <TableItem>{new Date(item.createdAt).toLocaleString()}</TableItem>
-                                    <TableItem>{new Date(item.updatedAt).toLocaleString()}</TableItem>
-                                    <TableItem onClick={() => handleJournalEdit(item.journal_id, item.journal_name)}>✎</TableItem>
-                                    <TableItem onClick={() => handleJournalDelete(item.journal_id)}>❌</TableItem>
-                                </TableRow>
-                            )
-                        })
+                        </tbody>
+                        :
+                        <></>
                     }
-                </tbody>
-            </Table>
-        </JournalContainer>
-    )
+                </Table>
+                {
+                    journals && journals[0] ?
+                    <></>
+                    :
+                    <EmptyJournalContatiner>
+                        <h4>Looks like you don't have any journals. Create a new one!</h4>
+                        <CreateModal getJournals={getJournals} location='bottom'/>
+                    </EmptyJournalContatiner>
+                }
+                
+            </JournalContainer>
+            </Router>
+        )
+    // }
+    
 }
 
 export default JournalsAll;
