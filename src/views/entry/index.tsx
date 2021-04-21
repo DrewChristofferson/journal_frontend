@@ -7,7 +7,7 @@ import Editor from "@monaco-editor/react";
 import Button from '../../Components/Button/Button';
 import AppContext from '../../context/context';
 import axios from 'axios';
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 const BreadcrumbContainer = styled.div`
@@ -85,7 +85,7 @@ function JournalEntry () {
     const [isEditView, setIsEditView] = useState(false);
     const [displayText, setDisplayText] = useState<string>('')
     const [markdownContent, setMarkdownContent] = useState<string | undefined>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
     const context = useContext(AppContext); 
     let history = useHistory(); 
     const config = {
@@ -125,7 +125,7 @@ function JournalEntry () {
                     setJournal(response.data[i]);
                 }
             }
-            setIsLoading(false)
+            // setIsLoading(false)
         })
         .catch((e) => e)
     }
@@ -158,13 +158,13 @@ function JournalEntry () {
         setIsEditView(!isEditView);
     }
 
-    if (isLoading) {
-        return(
-            <LoadingContainer>
-                <CircularProgress/>
-            </LoadingContainer>
-        )
-    } else {
+    // if (isLoading) {
+    //     return(
+    //         <LoadingContainer>
+    //             <CircularProgress/>
+    //         </LoadingContainer>
+    //     )
+    // } else {
         return(
             <JournalContainer>
                 <BreadcrumbContainer>
@@ -215,7 +215,7 @@ function JournalEntry () {
                 }
             </JournalContainer>
         )
-    }
+    // }
     
 }
 

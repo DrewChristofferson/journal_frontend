@@ -2,15 +2,13 @@ import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components'
 import Searchbar from '../../Components/searchbar'
 import { GrAddCircle } from 'react-icons/gr';
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { BrowserRouter as Router,useHistory, Link } from "react-router-dom";
 import axios from 'axios';
 import AppContext from '../../context/context';
 import CreateModal from '../../Components/Modals/CreateModal'
 import Button from '../../Components/Button/Button'
 import Input from '../../Components/Input/Input'
-import CircularProgress from '@material-ui/core/CircularProgress';
-
-
+// import CircularProgress from '@material-ui/core/CircularProgress';
 
 const JournalContainer = styled.div`
     display: flex;
@@ -87,11 +85,6 @@ interface JournalObject {
     user_id: string;
 }
 
-interface MatchParams {
-    jid: string,
-    eid: string
-  };
-
 const journalColumns: string[] = [
     "Journal Name",
     "Date Created",
@@ -101,11 +94,10 @@ const journalColumns: string[] = [
 
 function JournalsAll () {
     let history = useHistory();
-    let match = useRouteMatch<MatchParams>(`/journals/:jid/:eid`);
     const context = useContext(AppContext);
     const [journals, setJournals] = useState<[JournalObject] | undefined>();
     const [isEditing, setIsEditing] = useState<string | undefined>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
     const [journalName, setJournalName] = useState<string | undefined>();
     const config = {
         headers: {
@@ -167,30 +159,31 @@ function JournalsAll () {
         .then((response) => {
             setJournals(response.data);
             context.updateJournals(response.data);
-            setIsLoading(false);
+            // setIsLoading(false);
         })
         .catch((e) => e)
     };
 
 
-    if (isLoading){
+    // if (isLoading){
+    //     return(
+    //         <LoadingContainer>
+    //             <CircularProgress/>
+    //         </LoadingContainer>
+    //     )
+    // } else{
         return(
-            <LoadingContainer>
-                <CircularProgress/>
-            </LoadingContainer>
-        )
-    } else{
-        return(
+            <Router>
             <JournalContainer>
                 <BreadcrumbContainer>
-                    <Link to="/journals">My Journals</Link> 
+                    <Link to="/journals" data-testid="title">My Journals</Link> 
                 </BreadcrumbContainer>
                 <JournalHeader>
                     <JournalTitleGroup>
                         <JournalTitleText>
                             My Journals
                         </JournalTitleText>
-                        <CreateModal getJournals={getJournals}/>
+                        <CreateModal getJournals={getJournals} location='top'/>
                     </JournalTitleGroup>
                     {/* <Searchbar /> */}
                 </JournalHeader>
@@ -208,7 +201,7 @@ function JournalsAll () {
                     </thead>
                     {
                         journals && journals[0] ?
-                        <tbody>
+                        <tbody data-testid="journalsTable">
                         {
                             journals?.map(item => {
                                 return (
@@ -255,13 +248,14 @@ function JournalsAll () {
                     :
                     <EmptyJournalContatiner>
                         <h4>Looks like you don't have any journals. Create a new one!</h4>
-                        <CreateModal getJournals={getJournals}/>
+                        <CreateModal getJournals={getJournals} location='bottom'/>
                     </EmptyJournalContatiner>
                 }
                 
             </JournalContainer>
+            </Router>
         )
-    }
+    // }
     
 }
 

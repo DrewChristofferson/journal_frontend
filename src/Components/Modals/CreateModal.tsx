@@ -36,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
   }));
 
   interface Props {
-      getJournals(): void;
+      getJournals(): void,
+      location: string
   }
 
   
@@ -81,22 +82,22 @@ const CreateModal: React.FC<Props> = (props) => {
     };
 
     const body = (
-        <div  className={classes.paper}>
-          <h2 id="simple-modal-title">Create a New Journal</h2>
+        <div  className={classes.paper} data-testid="createjournalmodal">
+          <h2 id="simple-modal-title" data-testid="modaltitle">Create a New Journal</h2>
           <p id="simple-modal-description">
             Create a journal to organize the entries that you create.
           </p>
           <Input placeholder="Journal Name" value={name} style={{width: '80%'}} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}/>
           <div className={classes.buttonContainer}>
             <Button variant="secondary" onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleNewJournalClick}>Save</Button>
+            <Button onClick={handleNewJournalClick} data-testid="save">Save</Button>
           </div> 
         </div>
       );
 
     return (
         <>
-        <AddIcon size="30" onClick={handleOpen}/>
+        <AddIcon size="30" onClick={handleOpen} data-testid={`${props.location}-addjournal`}/>
             <Modal
                 open={open}
                 onClose={handleClose}
