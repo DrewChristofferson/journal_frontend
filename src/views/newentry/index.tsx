@@ -1,4 +1,4 @@
-import React, { MouseEvent, useContext, useState, useEffect } from 'react'
+import React, { MouseEvent, useContext, useState } from 'react'
 import styled from 'styled-components'
 import Editor from "@monaco-editor/react";
 import { useHistory, useParams } from 'react-router-dom';
@@ -22,9 +22,6 @@ const NewEntryForm = styled.form`
 
 function NewEntry () {
     let history = useHistory();
-    const [theme, setTheme] = useState("light");
-    const [language, setLanguage] = useState("markdown");
-    const [isEditorReady, setIsEditorReady] = useState(false);
     const [entryTitle, setEntryTitle] = useState<string | undefined>();
     const [entryContent, setEntryContent] = useState<string | undefined>();
     const context = useContext(AppContext);
@@ -83,7 +80,7 @@ function NewEntry () {
                     height="50vh"
                     width="50vw" // By default, it fully fits with its parent
                     theme={'dark'}
-                    language={language}
+                    language="markdown"
                     value={entryContent}
                     loading={"Loading..."}
                     onChange={handleEditorChange}

@@ -1,11 +1,5 @@
 import React from 'react';
-import JournalEntry from '../views/entry';
 
-interface Context {
-    journalEntryItems: JournalEntryObject;
-    journals: JournalObject;
-
-};
 
 interface JournalEntryObject {
     record_id: string;
@@ -88,7 +82,6 @@ let API_BASE_URL = "http://rh-lb-493719566.us-east-1.elb.amazonaws.com";
 let isAuthenticated = false;
 
 const AppContext = React.createContext({
-    journalEntryItems: entryData,
     journals: journalData,
     updateToken,
     isAuthenticated,

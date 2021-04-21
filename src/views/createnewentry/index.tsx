@@ -1,7 +1,7 @@
 import React, { MouseEvent, useContext, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Editor from "@monaco-editor/react";
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import AppContext from '../../context/context';
 import axios from 'axios';
 import { Select } from '../../Components/Dropdown/dropdown';
@@ -29,7 +29,6 @@ interface JournalObject {
 
 export default function CreateNewEntry () {
     let history = useHistory();
-    const [language, setLanguage] = useState("markdown");
     const [journals, setJournals] = useState<[JournalObject] | undefined>();
     const [entryTitle, setEntryTitle] = useState<string | undefined>();
     const [entryContent, setEntryContent] = useState<string | undefined>();
@@ -129,7 +128,7 @@ export default function CreateNewEntry () {
                     height="50vh"
                     width="50vw" // By default, it fully fits with its parent
                     theme={'dark'}
-                    language={language}
+                    language={"markdown"}
                     value={entryContent}
                     loading={"Loading..."}
                     onChange={handleEditorChange}
