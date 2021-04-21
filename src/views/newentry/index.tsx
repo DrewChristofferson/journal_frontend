@@ -4,6 +4,9 @@ import Editor from "@monaco-editor/react";
 import { useHistory, useParams } from 'react-router-dom';
 import AppContext from '../../context/context';
 import axios from 'axios';
+import Button from '../../Components/Button/Button';
+import { ButtonsContainer } from '../../Components/Container/container';
+import Input from '../../Components/Input/Input'
 
 const NewEntryTitleText = styled.div`
     font-size: 42px;
@@ -16,62 +19,6 @@ const NewEntryForm = styled.form`
     display: flex;
     flex-direction: column;
 `
-
-const Label = styled.label`
-    font-size: p
-`
-
-const Input = styled.input`
-    border: 2px solid #dadada;
-    border-radius: 7px;
-    height: 30px;
-    width: 50%;
-    text-indent: 10px;
-    &:focus {
-        outline: none;
-        border-color: #9ecaed;
-        box-shadow: 0 0 2px #9ecaed;
-`;
-
-const Content = styled.textarea`
-    border: 2px solid #dadada;
-    border-radius: 7px;
-    height: 400px;
-    width: 80%;
-    text-indent: 10px;
-    &:focus {
-        outline: none;
-        border-color: #9ecaed;
-        box-shadow: 0 0 2px #9ecaed;
-`;
-
-const Submit = styled.button`
-    border: 2px solid #2158ff;
-    background-color: #2158ff;
-    color: white;
-    border-radius: 7px;
-    height: 30px;
-    width: 100px;
-    &:hover {
-        background-color: blue;
-        color: white;
-        border: 2px solid blue;
-        cursor: pointer;
-
-`;
-
-const Cancel = styled.button`
-    border: 2px solid #dadada;
-    border-radius: 7px;
-    height: 30px;
-    width: 100px;
-    &:hover {
-        background-color: blue;
-        color: white;
-        border: 2px solid blue;
-        cursor: pointer;
-
-`;
 
 function NewEntry () {
     let history = useHistory();
@@ -114,6 +61,10 @@ function NewEntry () {
         await axios.post(`${context.API_BASE_URL}/api/v1/record`, entry, config)
     };
 
+    function handleCancel(e:MouseEvent){
+        e.preventDefault();         
+        history.push("/journals");
+    }
 
     return(
         <div>
@@ -121,10 +72,13 @@ function NewEntry () {
                 Create a New Entry
             </NewEntryTitleText>
             <NewEntryForm>
-
-                <Input type="textarea" id="title" placeholder="Title" value={entryTitle} onChange={(e: React.FormEvent<HTMLInputElement>) => setEntryTitle(e.currentTarget.value)}/>
-
-                 
+                <Input 
+                    type="textarea" 
+                    id="title" 
+                    placeholder="Title" 
+                    value={entryTitle} 
+                    onChange={(e: React.FormEvent<HTMLInputElement>) => setEntryTitle(e.currentTarget.value)}
+                />
                 <Editor
                     height="50vh"
                     width="50vw" // By default, it fully fits with its parent
@@ -134,12 +88,10 @@ function NewEntry () {
                     loading={"Loading..."}
                     onChange={handleEditorChange}
                 />
-                <Cancel onClick={() => history.push("/journals")}>
-                    Cancel
-                </Cancel>
-                <Submit onClick={handleSubmit}>
-                    Save
-                </Submit>
+                <ButtonsContainer>
+                    <Button onClick={handleCancel} variant='secondary'>Cancel</Button>
+                    <Button onClick={handleSubmit}>Done</Button>
+                </ButtonsContainer>
             </NewEntryForm>
         </div>
     )

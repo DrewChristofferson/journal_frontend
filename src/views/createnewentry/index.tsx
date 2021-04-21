@@ -6,6 +6,9 @@ import AppContext from '../../context/context';
 import axios from 'axios';
 import { Select } from '../../Components/Dropdown/dropdown';
 import Button from '../../Components/Button/Button';
+import { ButtonsContainer } from '../../Components/Container/container';
+import Input from '../../Components/Input/Input';
+
 
 const NewEntryTitleText = styled.div`
     font-size: 42px;
@@ -16,63 +19,6 @@ const NewEntryForm = styled.form`
     display: flex;
     flex-direction: column;
 `
-
-const Label = styled.label`
-    font-size: p
-`
-
-const Input = styled.input`
-    border: 2px solid #dadada;
-    border-radius: 7px;
-    height: 30px;
-    width: 50%;
-    text-indent: 10px;
-    &:focus {
-        outline: none;
-        border-color: #9ecaed;
-        box-shadow: 0 0 2px #9ecaed;
-`;
-
-const Content = styled.textarea`
-    border: 2px solid #dadada;
-    border-radius: 7px;
-    height: 400px;
-    width: 80%;
-    text-indent: 10px;
-    &:focus {
-        outline: none;
-        border-color: #9ecaed;
-        box-shadow: 0 0 2px #9ecaed;
-`;
-
-const Submit = styled.button`
-    border: 2px solid #2158ff;
-    background-color: #2158ff;
-    color: white;
-    border-radius: 7px;
-    height: 30px;
-    width: 100px;
-    &:hover {
-        background-color: blue;
-        color: white;
-        border: 2px solid blue;
-        cursor: pointer;
-
-`;
-
-const Cancel = styled.button`
-    border: 2px solid #dadada;
-    border-radius: 7px;
-    height: 30px;
-    width: 100px;
-    &:hover {
-        background-color: blue;
-        color: white;
-        border: 2px solid blue;
-        cursor: pointer;
-
-`;
-
 interface JournalObject {
     journal_id: string;
     journal_name: string;
@@ -83,9 +29,7 @@ interface JournalObject {
 
 export default function CreateNewEntry () {
     let history = useHistory();
-    const [theme, setTheme] = useState("light");
     const [language, setLanguage] = useState("markdown");
-    const [isEditorReady, setIsEditorReady] = useState(false);
     const [journals, setJournals] = useState<[JournalObject] | undefined>();
     const [entryTitle, setEntryTitle] = useState<string | undefined>();
     const [entryContent, setEntryContent] = useState<string | undefined>();
@@ -101,7 +45,6 @@ export default function CreateNewEntry () {
     useEffect(() => {
         getJournals();
     }, [])
-
 
     const handleSubmit = (e: MouseEvent) => {
         e.preventDefault();
@@ -133,7 +76,7 @@ export default function CreateNewEntry () {
         })
         .catch((e) => e)
     };
-
+    
     //create a dropdown of the journals
     let optionItems = journals?.map((item) =>
         <option key={item.journal_id} value={item.journal_id}>{item.journal_name}</option>
@@ -154,17 +97,20 @@ export default function CreateNewEntry () {
 
     }
 
+    function handleCancel(e:MouseEvent){
+        e.preventDefault();         
+        history.push("/journals");
+    }
+
     return(
         <div>
             <NewEntryTitleText>
                 Create a New Entry
             </NewEntryTitleText>
             <NewEntryForm>
-                <Select onChange={handleSelect}>
+                <Select onChange={handleSelect}> 
                     <option value="" hidden>Select Journal</option>
                     {optionItems}
-            
-                      
                 </Select>
                     {
                         showError ?
@@ -172,7 +118,6 @@ export default function CreateNewEntry () {
                         :
                         <></>
                     } 
-
                 <Input 
                     type="textarea" 
                     id="title" 
@@ -180,7 +125,6 @@ export default function CreateNewEntry () {
                     value={entryTitle} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => setEntryTitle(e.currentTarget.value)}
                 />
-                 
                 <Editor
                     height="50vh"
                     width="50vw" // By default, it fully fits with its parent
@@ -190,12 +134,10 @@ export default function CreateNewEntry () {
                     loading={"Loading..."}
                     onChange={handleEditorChange}
                 />
-                <Cancel onClick={() => history.push("/createnewentry")}>
-                    Cancel
-                </Cancel>
-                <Submit onClick={handleSubmit}>
-                    Save
-                </Submit>
+                <ButtonsContainer>
+                    <Button onClick={handleCancel} variant='secondary'>Cancel</Button>
+                    <Button onClick={handleSubmit}>Done</Button>
+                </ButtonsContainer>
             </NewEntryForm>
         </div>
     )

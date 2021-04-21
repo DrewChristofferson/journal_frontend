@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { EntryPage, PageHeader } from '../../Components/Login/login'; 
 import EntryCard from '../../Components/EntryCard/EntryCard';
 import InputGroup from '../../Components/InputGroup/InputGroup';
-import LoginInput from '../../Components/Input/Input';
+import LoginInput from '../../Components/Input/LoginInput';
 import LoginButton from '../../Components/LoginButton/LoginButton';
 import { Container, FormContainer, PromoContainer } from '../../Components/Container/container'
 import Promo from '../login/loginpromo'
@@ -21,7 +21,7 @@ interface MyFormValues {
     password: string;
   }
 
-export default function Login() {
+export default function SignUp() {
     const history = useHistory();
     const initialValues: MyFormValues = { name:'', email: '', username: '', password: '' };
     const [showError, setShowError] = useState<Boolean>(false);
