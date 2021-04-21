@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Searchbar from '../../Components/SearchBar/SearchBar';
-import { GrAddCircle, GrEdit } from 'react-icons/gr';
-import { useHistory, useParams, Link, useRouteMatch } from "react-router-dom";
-// import { contextType } from 'react-commonmark';
+import { useHistory, useParams, Link } from "react-router-dom";
 import DeleteModal from '../../Components/Modals/DeleteModal'
 import AppContext from '../../context/context';
 import axios from 'axios';
@@ -64,19 +61,25 @@ const TableItem = styled.td`
     padding-left: 10px;
 `
 
-const LoadingContainer = styled.div`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`
+// const LoadingContainer = styled.div`
+//     width: 100%;
+//     height: 100%;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+// `
 
 const EmptyJournalContatiner = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 50px;
+`
+
+const VerticallyAlign = styled.div`
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
 `
 
 
@@ -87,10 +90,6 @@ interface JournalObject {
     createdAt: number;
     updatedAt: number;
 };
-
-const journalItems: JournalObject[] = [
-
-]
 
 interface JournalEntryObject {
     record_id: string;
@@ -107,21 +106,14 @@ const journalColumns: string[] = [
     "Last Update"
 ]
 
-interface MatchParams {
-    jid: string,
-    eid: string
-  };
-
 
 function Journal () {
     let history = useHistory();
     const context = useContext(AppContext);
     const [records, setRecords] = useState<[JournalEntryObject] | undefined>();
     const [journal, setJournal] = useState<JournalObject>();
-    const [record, setRecord] = useState<JournalEntryObject>();
     const [isEditing, setIsEditing] = useState<string | undefined>();
     const [isDeletePrompt, setIsDeletePrompt] = useState<string | undefined>();
-    const [journalName, setJournalName] = useState<string | undefined>();
     const [recordName, setRecordName] = useState<string | undefined>();
     // const [isLoading, setIsLoading] = useState<boolean>(true);
     const config = {
@@ -171,11 +163,7 @@ function Journal () {
         setRecordName(name);
         setIsEditing(id);
     };
-    const handleRecordClick = (id: string) => {
-        history.push(`/journals/${id}`)
-        let entry = context.journalEntryItems.filter(r => r.record_id === id)[0];
-        context.updateRecord(entry);
-    }
+
     const updateRecordName = async () => {
         await axios.put(
             `${context.API_BASE_URL}/api/v1/record/${isEditing}`, 
@@ -253,7 +241,7 @@ function Journal () {
                                                 </div>
                                                 
                                                 :
-                                                <TableItem onClick={() => handleRecordClick(item.record_id)}>
+                                                <TableItem onClick={() => handleJournalEntryClick(item.record_id)}>
                                                     {item.record_title}
                                                 </TableItem> 
                                             }
@@ -262,21 +250,29 @@ function Journal () {
                                             {
                                                 isEditing === item.record_id ?
                                                 <TableItem onClick={() => setIsEditing(undefined)}>
-                                                    <EditIcon size='30'/>
+                                                    <VerticallyAlign>
+                                                        <EditIcon size={20} style={{padding: 0}}/>
+                                                    </VerticallyAlign>
                                                 </TableItem>
                                                 :
                                                 <TableItem onClick={() => handleRecordEdit(item.record_id, item.record_title)}>
-                                                    <EditIcon size='30' />
+                                                    <VerticallyAlign>
+                                                        <EditIcon size={20} style={{padding: 0}}/>
+                                                    </VerticallyAlign>
                                                 </TableItem>    
                                             }
                                             {
                                                 isDeletePrompt === item.record_id ?
                                                 <TableItem onClick={() => setIsDeletePrompt(undefined)}>
-                                                    <DeleteModal handleRecordDelete={handleRecordDelete} id={item.record_id} location='bottom'/>
+                                                    <VerticallyAlign>
+                                                        <DeleteModal handleRecordDelete={handleRecordDelete} id={item.record_id} location='bottom'/>
+                                                    </VerticallyAlign>
                                                 </TableItem>
                                                 :
                                                 <TableItem>
-                                                    <DeleteModal handleRecordDelete={handleRecordDelete} id={item.record_id} location='bottom'/>
+                                                    <VerticallyAlign>
+                                                        <DeleteModal handleRecordDelete={handleRecordDelete} id={item.record_id} location='bottom'/>
+                                                    </VerticallyAlign>
                                                 </TableItem>
                                             }
                                         </TableRow>

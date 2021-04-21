@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react'
+import { useContext } from 'react'
+// import { useContext, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Link } from "react-router-dom"
 import { IoIosJournal } from 'react-icons/io';
@@ -7,6 +8,7 @@ import { AiFillSetting } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
 import { IoMdBookmarks } from 'react-icons/io';
 import AppContext from './context/context';
+//import axios from 'axios'
 
 
 
@@ -62,28 +64,47 @@ const NavText = styled.div`
     padding-left: 20px;
 `
 
-// const NavIcon = styled.div`
-//     sel: 20px;
-// `
-
-//if context.journals.length < 1, disable the ability to create a new entry
-
 const links: any[][] = [
     ["My Journals", "/journals", < IoIosJournal size={22} />],
     ["Create New Entry", "/createnewentry", < FaPenAlt size={22} />],
     ["Settings", "/settings", < AiFillSetting size={22} />]
 ]
 
-const links2: any[][] = [
-    ["My Journals", "/journals", < IoIosJournal size={22} />],
-    ["Settings", "/settings", < AiFillSetting size={22} />]
-]
+// const links2: any[][] = [
+//     ["My Journals", "/journals", < IoIosJournal size={22} />],
+//     ["Settings", "/settings", < AiFillSetting size={22} />]
+// ]
 
-
+// interface JournalObject {
+//     journal_id: string;
+//     journal_name: string;
+//     createdAt: Date;
+//     updatedAt: Date;
+//     user_id: string;
+// }
 
 function Sidebar () {
     const context = useContext(AppContext);
-    const [journalExists, setJournalExists] = useState<Boolean>(true);
+    //const [journals, setJournals] = useState<[JournalObject] | undefined>();
+    // const config = {
+    //     headers: {
+    //       Authorization: `Bearer ${localStorage.getItem('token')}`,
+    //     }
+    // }
+
+    // useEffect(() => {
+    //     getJournals();
+    // }, [])
+
+    // const getJournals = async() => {
+    //     await axios.get(`${context.API_BASE_URL}/api/v1/journal/user`, config)
+    //     .then((response) => {
+    //         setJournals(response.data);
+    //         context.updateJournals(response.data);
+    //         // setIsLoading(false);
+    //     })
+    //     .catch((e) => e)
+    // };
 
     return(
         <SidebarContainer>
@@ -98,7 +119,7 @@ function Sidebar () {
             </Header>
             <SidebarLinks>
                 {
-                    journalExists ?
+                    // journals && journals[0] ?
                     links.map(link => {
                         return (
                             <NavLink key={link[0]} to={link[1]}>
@@ -110,18 +131,18 @@ function Sidebar () {
                             </NavLink>
                         )
                     })
-                    :
-                    links2.map(link => {
-                        return (
-                            <NavLink key={link[0]} to={link[1]}>
-                                {link[2]}                                
-                                <NavText>
-                                    {link[0]}
-                                </NavText>
+                    // :
+                    // links2.map(link => {
+                    //     return (
+                    //         <NavLink key={link[0]} to={link[1]}>
+                    //             {link[2]}                                
+                    //             <NavText>
+                    //                 {link[0]}
+                    //             </NavText>
                                 
-                            </NavLink>
-                        )
-                    })
+                    //         </NavLink>
+                    //     )
+                    // })
                 }
                 <NavLink key="Log Out" to="/login" onClick={() => context.logout()}>
                     < BiLogOut size={22} />                                
