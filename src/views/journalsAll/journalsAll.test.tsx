@@ -7,21 +7,29 @@ import { act } from "react-dom/test-utils";
 // import react-testing methods
 import { render, fireEvent, waitFor, screen, wait, getByPlaceholderText } from '@testing-library/react'
 
-// // declare which API requests to mock
-// const server = setupServer(
-//     // capture "GET /greeting" requests
-//     rest.get('/api/vi/journal/user', (req, res: any, ctx: any) => {
-//       // respond using a mocked JSON body
-//       return res(ctx.json({ 
-//             "journal_id": '1234',
-//             "journal_name": 'my journal',
-//             "createdAt": Date.now(),
-//             "updatedAt": Date.now(),
-//             "user_id": '123',
-//         }
-//     ))
-//     })
-//   )
+// declare which API requests to mock
+const server = setupServer(
+    // capture "GET /greeting" requests
+    rest.get('/api/v1/journal/user', (req, res: any, ctx: any) => {
+      // respond using a mocked JSON body
+      return res(ctx.json({ 
+            "journal_id": '1234',
+            "journal_name": 'my journal',
+            "createdAt": Date.now(),
+            "updatedAt": Date.now(),
+            "user_id": '123',
+        }
+    ))
+    })
+  )
+
+// establish API mocking before all tests
+beforeAll(() => server.listen())
+// reset any request handlers that are declared as a part of our tests
+// (i.e. for testing one-time error scenarios)
+afterEach(() => server.resetHandlers())
+// clean up once the tests are done
+afterAll(() => server.close())
 
 // // establish API mocking before all tests
 // beforeAll(() => server.listen())
@@ -34,10 +42,10 @@ import { render, fireEvent, waitFor, screen, wait, getByPlaceholderText } from '
 
 test('renders My Journals', async() => {
   render(<Journals />);
+
   const pageTitle = screen.getByTestId('title');
   expect(pageTitle).toBeInTheDocument();
 
-  //on create modal component
   fireEvent.click(screen.getByTestId('bottom-addjournal'))
   
   await waitFor(() => screen.getByTestId("createjournalmodal"))
@@ -63,3 +71,4 @@ test('renders My Journals', async() => {
 
 
 });
+

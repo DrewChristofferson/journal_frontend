@@ -8,6 +8,8 @@ import DeleteModal from '../../Components/Modals/DeleteModal'
 import Button from '../../Components/Button/Button'
 import Input from '../../Components/Input/LoginInput'
 import { EditIcon } from '../../Components/Icons/Icons'
+// import CircularProgress from '@material-ui/core/CircularProgress';
+import { H1 } from '../../Components/Typography/Typography'
 
 const JournalContainer = styled.div`
     display: flex;
@@ -86,6 +88,10 @@ interface JournalObject {
     user_id: string;
 }
 
+interface Props {
+    getJournals(): void, 
+}
+
 const journalColumns: string[] = [
     "Journal Name",
     "Date Created",
@@ -144,7 +150,6 @@ function JournalsAll () {
             setIsEditing(undefined);
             getJournals();
         }
-  
     };
 
     const getJournals = async() => {
@@ -173,9 +178,9 @@ function JournalsAll () {
                 </BreadcrumbContainer>
                 <JournalHeader>
                     <JournalTitleGroup>
-                        <JournalTitleText>
+                        <H1>
                             My Journals
-                        </JournalTitleText>
+                        </H1>
                         <CreateModal getJournals={getJournals} location='top'/>
                     </JournalTitleGroup>
                     {/* <Searchbar /> */}
