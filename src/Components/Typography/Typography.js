@@ -4,16 +4,16 @@ import styled from 'styled-components'
 const Container = styled.div`
     font-family: 'Nunito', sans-serif;
 `
-const H1 = styled.h1`
-    font-size: 40px;
+export const H1 = styled.div`
+    font-size: 42px;
 `
-const H2 = styled.h2`
+export const H2 = styled.h2`
     font-size: 30px;
 `
-const H3 = styled.h3`
+export const H3 = styled.h3`
     font-size: 20px;
 `
-const H4 = styled.h4`
+export const H4 = styled.h4`
     font-size: 15px;
 `
 

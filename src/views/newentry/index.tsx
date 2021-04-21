@@ -78,7 +78,7 @@ function NewEntry () {
                 />
                 <Editor
                     height="50vh"
-                    width="50vw" // By default, it fully fits with its parent
+                    // width="50vw" // By default, it fully fits with its parent
                     theme={'dark'}
                     language="markdown"
                     value={entryContent}
