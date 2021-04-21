@@ -12,11 +12,7 @@ const Container = styled.div`
 const Header = styled.div`
     display: flex;
 `
-const ButtonContainer = styled.div`
-    display: flex;
-    align-items: center;
-    padding-left: 50px;
-`
+
 const ContentWrapper = styled.div`
     padding-top: 80px;
     display: flex;
