@@ -132,7 +132,6 @@ function Journal () {
         await axios.get(`${context.API_BASE_URL}/api/v1/journal/user`, config)
         .then((response) => {
             for (let i = 0; i < response.data.length; i++) {
-                console.log(response.data[i].journal_id, jid)
                 if (response.data[i].journal_id === jid){
                     setJournal(response.data[i]);
                 }
@@ -198,7 +197,7 @@ function Journal () {
         return(
             <JournalContainer>
                 <BreadcrumbContainer>
-                    <Link to="/journals">My Journals</Link> &gt; <Link to={`/journals/${jid}`}>{journal?.journal_name}</Link>
+                    <Link to="/journals" data-testid="bc">My Journals</Link> &gt; <Link to={`/journals/${jid}`}>{journal?.journal_name}</Link>
                 </BreadcrumbContainer>
                 <JournalHeader>
                     <JournalTitleGroup>
@@ -207,7 +206,7 @@ function Journal () {
                                 journal?.journal_name
                             }
                         </JournalTitleText>
-                        <AddIcon size={30} onClick={handleNewEntryClick}/>
+                        <AddIcon size={30} onClick={handleNewEntryClick} data-testid="addrecord"/>
                     </JournalTitleGroup>
                     {/* <Searchbar placeholder="Search" /> */}
                 </JournalHeader>
