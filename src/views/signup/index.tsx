@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import { Formik, Field, Form, FormikHelpers } from "formik";
 import axios from 'axios';
 import AppContext from '../../context/context';
@@ -30,7 +30,7 @@ export default function SignUp() {
     
         axios({
             method: 'post',
-            url: `${context.API_BASE_URL}/api/v1/user`,
+            url: `http://rh-lb-493719566.us-east-1.elb.amazonaws.com/api/v1/user`,
             data: {
               name: values.name,
               email: values.email,
@@ -83,13 +83,14 @@ export default function SignUp() {
     }
 
     return (
+        <Router>
         <Container>
             <Promo/>
             <FormContainer>
             <EntryPage>
                 {/* <PageHeader to="/">Awesome Journal</PageHeader> */}
                 <EntryCard>
-                    <h1>Sign Up</h1>
+                    <h1 data-testid="signupheader">Sign Up</h1>
                     <Formik 
                         initialValues={initialValues}
                         onSubmit={(values: MyFormValues, actions: FormikHelpers<MyFormValues>) => {
@@ -98,21 +99,21 @@ export default function SignUp() {
                         <Form>
                             <InputGroup>
                                 <label htmlFor='name'>Name</label>
-                                <Field name='name' type='text' placeholder='John Turner' as={LoginInput} />
+                                <Field name='name' id="name" type='text' placeholder='John Turner' as={LoginInput} />
                             </InputGroup>
                             <InputGroup>
                                 <label htmlFor='email'>Email</label>
-                                <Field name='email' type='text' placeholder='jturner@byu.edu' as={LoginInput} />
+                                <Field name='email' id="email" type='text' placeholder='jturner@byu.edu' as={LoginInput} />
                             </InputGroup>
                             <InputGroup>
                                 <label htmlFor='username'>Username</label>
-                                <Field name='username' type='text' placeholder='JohnT' as={LoginInput} />
+                                <Field name='username' id="username" type='text' placeholder='JohnT' as={LoginInput} />
                             </InputGroup>
                             <InputGroup>
                                 <label htmlFor='password'>Password</label>
-                                <Field name='password' type='password' placeholder='thisgrouprocks' as={LoginInput} />
+                                <Field name='password' id='password' type='password' placeholder='thisgrouprocks' as={LoginInput} />
                             </InputGroup>
-                            <LoginButton type='submit' full>Sign Up</LoginButton>
+                            <LoginButton type='submit' data-testid="signupbutton" full>Sign Up</LoginButton>
                         </Form> 
                     </Formik>
                     {
@@ -129,6 +130,7 @@ export default function SignUp() {
             </EntryPage>
           </FormContainer>
         </Container>
+        </Router>
     );
 }
 

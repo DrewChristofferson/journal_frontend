@@ -137,6 +137,7 @@ function JournalsAll () {
         setIsEditing(id);
     };
 
+
     const handleJournalEditSubmit = async () => {
         if(journalName !== ''){
             updateJournalName();

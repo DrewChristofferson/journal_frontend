@@ -94,6 +94,7 @@ const CreateModal: React.FC<Props> = (props) => {
                 onClose={handleClose}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
+                data-testid={`${props.location}-modal`}
                 >
                 {body}
             </Modal>
