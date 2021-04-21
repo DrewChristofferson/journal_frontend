@@ -10,32 +10,15 @@ import EntryCard from '../../Components/EntryCard/EntryCard';
 import InputGroup from '../../Components/InputGroup/InputGroup';
 import LoginInput from '../../Components/Input/Input';
 import LoginButton from '../../Components/LoginButton/LoginButton';
+import { Container, FormContainer, PromoContainer } from '../../Components/Container/container'
 import Promo from '../login/loginpromo'
 
-
-
-
-const Container = styled.div`
-    display: flex;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-`
-
-const FormContainer = styled.div`
-    flex-basis: 60%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-`
 
 interface MyFormValues {
     name: string; 
     email: string; 
     username: string;
     password: string;
-
   }
 
 export default function Login() {
