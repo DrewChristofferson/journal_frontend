@@ -124,7 +124,7 @@ export default function SignUp() {
                     }   
                     <span>
                         Already have an account?
-                        <Link to="/login" data-testid='tologin'>Sign In</Link>
+                        <Link to="/login" onClick={() => history.push("/login")} data-testid='tologin'>Sign In</Link>
                     </span>
                 </EntryCard>
             </EntryPage>
