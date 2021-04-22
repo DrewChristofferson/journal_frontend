@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "stories/Typography.stories.js", "stories/LoginButton.stories.js", "stories/LoginInput.stories.js", "stories/Input.stories.js", "stories/Dropdown.stories.js", "stories/Button.stories.js"  ]
 }

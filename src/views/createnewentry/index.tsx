@@ -90,9 +90,6 @@ export default function CreateNewEntry () {
             setJID(value);
             setShowError(false); 
         }
-        console.log(value)
-        console.log(Number(value))
-        console.log(showError)
 
     }
 

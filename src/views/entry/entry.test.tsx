@@ -1,5 +1,5 @@
 import React from 'react';
-import Journal from './index';
+import Entry from './index';
 // import API mocking utilities from Mock Service Worker
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
@@ -31,30 +31,22 @@ afterAll(() => server.close())
 
 test('Render Journal', async () => {
     render(
-    <MemoryRouter initialEntries={["/journal/jid"]}>
-        <Route path="/journal/:jid">
-            <Journal  />
+    <MemoryRouter initialEntries={["/journal/jid/eid"]}>
+        <Route path="/journal/:jid/:eid">
+            <Entry  />
         </Route>
     </MemoryRouter>
     );
-    const bc = screen.getByTestId('bc');
-    expect(bc).toBeInTheDocument();
+    const title = screen.getByTestId('title');
+    expect(title).toBeInTheDocument();
+    const content = screen.getByTestId('content');
+    expect(content).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTestId('addrecord'));
-    await waitFor(() => {
-        render(
-            <MemoryRouter initialEntries={["/journal/jid/newentry"]}>
-            <Route path="/journal/:jid.newentry">
-                <NewEntry />
-            </Route>
-        </MemoryRouter>
-        )
-    })
-    // const page = screen.getByText('Create a New Entry');
-    // expect(page).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('editbutton'));
+    await waitFor(() => screen.getByTestId("editdone"));
 
-    // const title = screen.getAllByPlaceholderText('Title');
-    // const content = screen.get
+    fireEvent.click(screen.getByTestId('editdone'));
+
 }
 )
 

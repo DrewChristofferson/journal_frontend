@@ -5,6 +5,8 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 // import react-testing methods
 import { render, fireEvent, waitFor, screen, wait, getByPlaceholderText } from '@testing-library/react'
+import { MemoryRouter, Route } from 'react-router';
+import { BrowserRouter as Router} from 'react-router-dom'
 import Input from '../../Components/Input/Input';
 
 // declare which API requests to mock
@@ -65,6 +67,23 @@ test('renders Create New Entry', async() => {
 
   //test button functionality
   fireEvent.click(saveButton)
+//   expect(fireEvent.click(cancelButton)).toHaveReturnedWith(200) //this one isnt' working
+
+})
+
+
+test('Create New Entry Cancel', async() => {
+  render(
+    <MemoryRouter >
+            <Router >
+                <CreateNewEntry />
+            </Router>
+        </MemoryRouter>
+  )
+
+  const cancelButton = screen.getByTestId('cancelButton')
+  //test button functionality
+  fireEvent.click(cancelButton)
 //   expect(fireEvent.click(cancelButton)).toHaveReturnedWith(200) //this one isnt' working
 
 })
