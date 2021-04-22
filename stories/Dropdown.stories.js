@@ -1,4 +1,4 @@
-import Select from './dropdown'
+import Select from '../src/Components/Dropdown/dropdown'
 
  
 export default {

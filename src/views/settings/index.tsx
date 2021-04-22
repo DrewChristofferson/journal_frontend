@@ -39,12 +39,18 @@ const SettingsContent = styled.div`
     font-size: 24px;
 `
 
+const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+`
+
 function Settings() {
     const context = useContext(AppContext);
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [name, setName] = useState<string>(context.userData.name)
-    const [username, setUsername] = useState<string>(context.userData.username)
-    const [email, setEmail] = useState<string>(context.userData.email)
+    const [name, setName] = useState<string>(localStorage.getItem('name') || 'Name not found')
+    const [username, setUsername] = useState<string>(localStorage.getItem('username') || 'Name not found')
+    const [email, setEmail] = useState<string>(localStorage.getItem('email') || 'Name not found')
     const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -74,22 +80,20 @@ function Settings() {
     }
 
     const submit = () => {
+        if (name.length > 0 && email.length > 0 && username.length > 0) {
+            updateUser();
+            localStorage.setItem('name', name);
+            localStorage.setItem('email', email);
+            localStorage.setItem('username', username);
+            setIsEditing(false);
+        }
+    }
+    const cancel = () => {
         updateUser();
-        context.updateUserData(
-            {
-                "accountNonExpired": context.userData.accountNonExpired,
-                "accountNonLocked": context.userData.accountNonLocked,
-                "authorities": context.userData.authorities,
-                "credentialsNonExpired": context.userData.credentialsNonExpired,
-                "email": email,
-                "enabled": context.userData.enabled,
-                "name": name,
-                "password": context.userData.password,
-                "role": context.userData.role,
-                "userid": context.userData.userid,
-                "username": username 
-            }
-        )
+        setName(localStorage.getItem('name') || 'Name not Found');
+        setUsername(localStorage.getItem('username') || 'Username not Found');
+        setEmail(localStorage.getItem('name') || 'Email not Found');
+
         setIsEditing(false);
 
     }
@@ -98,7 +102,7 @@ function Settings() {
         <Container>
             <Header>
                 <SettingsTitleText>Settings</SettingsTitleText>
-                {/* {
+                {
                     isEditing ?
                     <></>
                     :
@@ -106,9 +110,21 @@ function Settings() {
                         <Button style={{height: '50%'}} onClick={() => setIsEditing(true)}>Edit</Button>
                     </ButtonContainer>
                     
-                } */}
+                }
             </Header>
             <ContentWrapper>
+            <ContentRow>
+                    <SettingsSubTitleText>
+                        Username
+                    </SettingsSubTitleText>
+                    <SettingsContent>{localStorage.getItem('username')}</SettingsContent>  
+                    {/* {
+                        isEditing ?
+                        <Input style={{width: '100%'}} value={username} onChange={updateUsername} />
+                        :
+                        <SettingsContent>{localStorage.getItem('username')}</SettingsContent>  
+                    } */}
+                </ContentRow>
                 <ContentRow>
                     <SettingsSubTitleText>
                         Name
@@ -120,17 +136,6 @@ function Settings() {
                         <SettingsContent>{localStorage.getItem('name')}</SettingsContent>  
                     }
                     
-                </ContentRow>
-                <ContentRow>
-                    <SettingsSubTitleText>
-                        Username
-                    </SettingsSubTitleText>
-                    {
-                        isEditing ?
-                        <Input style={{width: '100%'}} value={username} onChange={updateUsername} />
-                        :
-                        <SettingsContent>{localStorage.getItem('username')}</SettingsContent>  
-                    }
                 </ContentRow>
                 <ContentRow>
                     <SettingsSubTitleText>
@@ -149,7 +154,7 @@ function Settings() {
                 {
                     isEditing ?
                     <div>
-                    <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
+                    <Button variant="secondary" onClick={cancel}>Cancel</Button>
                     <Button onClick={submit}>Done</Button>
                     </div>
                     :

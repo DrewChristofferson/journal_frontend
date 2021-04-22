@@ -1,4 +1,4 @@
-import LoginInput from './LoginInput'
+import LoginInput from '../src/Components/Input/LoginInput'
 
 export default {
     title: 'LoginInput',

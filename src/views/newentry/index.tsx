@@ -68,7 +68,7 @@ function NewEntry () {
             <NewEntryTitleText data-testid="title">
                 Create a New Entry
             </NewEntryTitleText>
-            <NewEntryForm>
+            <NewEntryForm data-testid="form">
                 <Input 
                     type="textarea" 
                     id="title" 
@@ -84,10 +84,11 @@ function NewEntry () {
                     value={entryContent}
                     loading={"Loading..."}
                     onChange={handleEditorChange}
+                    data-testid="editor"
                 />
                 <ButtonsContainer>
-                    <Button onClick={handleCancel} variant='secondary'>Cancel</Button>
-                    <Button onClick={handleSubmit}>Done</Button>
+                    <Button onClick={handleCancel} variant='secondary' data-testid="cancel">Cancel</Button>
+                    <Button onClick={handleSubmit} data-testid="done">Done</Button>
                 </ButtonsContainer>
             </NewEntryForm>
         </div>
