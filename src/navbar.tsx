@@ -13,13 +13,14 @@ import AppContext from './context/context';
 
 
 const SidebarContainer = styled.div`
-    background-color: black;
-    position: absolute;
-    bottom: 0;
-    top: 0;
+    height: 100%; 
+    position: fixed; 
+    top: 0; 
+    left: 0;
     width: 300px;
     color: white;
     padding-top: 20px;
+    background-color: black;
 `
 const Header = styled.div`
     display: flex;
