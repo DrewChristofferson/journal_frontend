@@ -172,10 +172,10 @@ function Journal () {
     };
     const handleRecordEditSubmit = async () => {
         if(recordName !== ''){
-            updateRecordName();
+            updateRecordName().then(() => {
+                getRecords();
+            })
             setIsEditing(undefined);
-            getRecords();
-            getRecords();
         }
     };
     /*** END ***/

@@ -71,41 +71,9 @@ const links: any[][] = [
     ["Settings", "/settings", < AiFillSetting size={22} />]
 ]
 
-// const links2: any[][] = [
-//     ["My Journals", "/journals", < IoIosJournal size={22} />],
-//     ["Settings", "/settings", < AiFillSetting size={22} />]
-// ]
-
-// interface JournalObject {
-//     journal_id: string;
-//     journal_name: string;
-//     createdAt: Date;
-//     updatedAt: Date;
-//     user_id: string;
-// }
 
 function Sidebar () {
     const context = useContext(AppContext);
-    //const [journals, setJournals] = useState<[JournalObject] | undefined>();
-    // const config = {
-    //     headers: {
-    //       Authorization: `Bearer ${localStorage.getItem('token')}`,
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     getJournals();
-    // }, [])
-
-    // const getJournals = async() => {
-    //     await axios.get(`${context.API_BASE_URL}/api/v1/journal/user`, config)
-    //     .then((response) => {
-    //         setJournals(response.data);
-    //         context.updateJournals(response.data);
-    //         // setIsLoading(false);
-    //     })
-    //     .catch((e) => e)
-    // };
 
     return(
         <SidebarContainer>
@@ -114,9 +82,9 @@ function Sidebar () {
                 <SidebarHeader>
                     DevJournal
                 </SidebarHeader>
-                {/* <SidebarSubtitle>
-                    Hi, {localStorage.getItem('name')} 👋
-                </SidebarSubtitle> */}
+                <SidebarSubtitle>
+                    Hi, {localStorage.getItem('username')} 👋
+                </SidebarSubtitle>
             </Header>
             <SidebarLinks>
                 {
@@ -132,18 +100,6 @@ function Sidebar () {
                             </NavLink>
                         )
                     })
-                    // :
-                    // links2.map(link => {
-                    //     return (
-                    //         <NavLink key={link[0]} to={link[1]}>
-                    //             {link[2]}                                
-                    //             <NavText>
-                    //                 {link[0]}
-                    //             </NavText>
-                                
-                    //         </NavLink>
-                    //     )
-                    // })
                 }
                 <NavLink key="Log Out" to="/login" onClick={() => context.logout()}>
                     < BiLogOut size={22} />                                
