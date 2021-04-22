@@ -1,6 +1,6 @@
 import React from 'react'
 import { textChangeRangeIsUnchanged } from 'typescript'
-import LoginButton from './LoginButton'
+import LoginButton from '../src/Components/LoginButton/LoginButton'
 
 export default {
     title: 'LoginButton',

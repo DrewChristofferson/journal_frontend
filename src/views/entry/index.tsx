@@ -171,7 +171,7 @@ function JournalEntry () {
                 <JournalHeader>
                     <JournalTitleGroup>
                         
-                        <JournalTitleText>
+                        <JournalTitleText data-testid="title">
                             {
                                 entry?.record_title
                             }
@@ -181,7 +181,7 @@ function JournalEntry () {
                                 isEditView ?
                                 <></>
                                 :
-                                <Button onClick={handleEditToggle}>Edit</Button>
+                                <Button onClick={handleEditToggle} data-testid='editbutton'>Edit</Button>
                             } 
                         </ButtonContainer> 
                     </JournalTitleGroup>
@@ -198,15 +198,15 @@ function JournalEntry () {
                             loading={"Loading..."}
                             onChange={handleEditorChange}
                         />
-                        <ButtonsContainer>
+                        <ButtonsContainer >
                             <Button onClick={() => setIsEditView(false)} variant='secondary'>Cancel</Button>
-                            <Button onClick={handleEditSubmit}>Done</Button>
+                            <Button onClick={handleEditSubmit} data-testid='editdone'>Done</Button>
                         </ButtonsContainer>
                         
                     </div>
                     
                     : /*** if false (not the editor view) ***/ 
-                    <EntryContent>
+                    <EntryContent data-testid='content'>
                         <div dangerouslySetInnerHTML={ {__html: displayText} } />
                     </EntryContent>
                 }

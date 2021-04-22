@@ -76,7 +76,7 @@ export default function Login() {
                                 <label htmlFor='password'>Password</label>
                                 <Field name='password' id='password' type='password' placeholder='thisgrouprocks' as={LoginInput} />
                             </InputGroup>
-                            <LoginButton type='submit' full>Sign In</LoginButton>
+                            <LoginButton type='submit' data-testid='loginbutton' full>Sign In</LoginButton>
                         </Form> 
                     </Formik>
                     {
@@ -87,7 +87,7 @@ export default function Login() {
                     }   
                     <span>
                         Don't have an account?
-                        <Link to="/signup" onClick={() => history.push("/signup")}>Sign Up</Link>
+                        <Link to="/signup" data-testid='tosignup' onClick={() => history.push("/signup")}>Sign Up</Link>
                     </span>
                 </EntryCard>
             </EntryPage>
