@@ -84,15 +84,13 @@ function Settings() {
             updateUser();
             localStorage.setItem('name', name);
             localStorage.setItem('email', email);
-            localStorage.setItem('username', username);
             setIsEditing(false);
         }
     }
     const cancel = () => {
         updateUser();
         setName(localStorage.getItem('name') || 'Name not Found');
-        setUsername(localStorage.getItem('username') || 'Username not Found');
-        setEmail(localStorage.getItem('name') || 'Email not Found');
+        setEmail(localStorage.getItem('email') || 'Email not Found');
 
         setIsEditing(false);
 

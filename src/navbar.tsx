@@ -113,9 +113,9 @@ function Sidebar () {
                 <SidebarHeader>
                     DevJournal
                 </SidebarHeader>
-                <SidebarSubtitle>
+                {/* <SidebarSubtitle>
                     Hi, {localStorage.getItem('name')} 👋
-                </SidebarSubtitle>
+                </SidebarSubtitle> */}
             </Header>
             <SidebarLinks>
                 {
