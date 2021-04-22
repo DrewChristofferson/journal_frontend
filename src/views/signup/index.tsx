@@ -30,7 +30,7 @@ export default function SignUp() {
     
         axios({
             method: 'post',
-            url: `http://rh-lb-493719566.us-east-1.elb.amazonaws.com/api/v1/user`,
+            url: `${context.API_BASE_URL}/api/v1/user`,
             data: {
               name: values.name,
               email: values.email,
