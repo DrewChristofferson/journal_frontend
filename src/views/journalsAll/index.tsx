@@ -146,9 +146,10 @@ function JournalsAll () {
 
     const handleJournalEditSubmit = async () => {
         if(journalName !== ''){
-            updateJournalName();
+            updateJournalName().then(() => {
+                getJournals();
+            })
             setIsEditing(undefined);
-            getJournals();
         }
     };
 
